@@ -198,6 +198,107 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.SeatsController",
+    "Method": "Create",
+    "RelativePath": "api/Seats",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.CreateSeatDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.SeatsController",
+    "Method": "GetById",
+    "RelativePath": "api/Seats/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.SeatsController",
+    "Method": "Update",
+    "RelativePath": "api/Seats/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.UpdateSeatDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.SeatsController",
+    "Method": "Delete",
+    "RelativePath": "api/Seats/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.SeatsController",
+    "Method": "BulkCreate",
+    "RelativePath": "api/Seats/bulk",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.BulkCreateSeatsDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.SeatsController",
+    "Method": "GetByScreenId",
+    "RelativePath": "api/Seats/screen/{screenId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "screenId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "MovieTicketBookingWebAPI.Controllers.TheatresController",
     "Method": "CreateTheatre",
     "RelativePath": "api/Theatres",

@@ -37,6 +37,11 @@ builder.Services.AddScoped<IScreenRepository, ScreenRepository>();
 
 builder.Services.AddScoped<IScreenService, ScreenService>();
 
+
+// Register SeatRepository and SeatService
+builder.Services.AddScoped<ISeatRepository, SeatRepository>();
+builder.Services.AddScoped<ISeatService, SeatService>();
+
 var app = builder.Build();
 
 // Configure HTTP request pipeline

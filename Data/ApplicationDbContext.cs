@@ -17,7 +17,14 @@ public class ApplicationDbContext : DbContext
     // Theatre table
     public DbSet<Theatre> Theatres { get; set; }
 
+    // Screen table
     public DbSet<Screen> Screens { get; set; }
+
+    // Seat table
+    public DbSet<Seat> Seats { get; set; }
+
+    //show table
+    public DbSet<Show> Shows { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -74,6 +81,77 @@ public class ApplicationDbContext : DbContext
             entity.HasOne<Theatre>()
                   .WithMany()
                   .HasForeignKey(s => s.TheatreId);
+        });
+
+
+
+        // Seat table configuration
+        modelBuilder.Entity<Seat>(entity =>
+        {
+            entity.HasKey(s => s.SeatId);
+
+            entity.Property(s => s.RowName)
+                  .IsRequired()
+                  .HasMaxLength(5);
+
+            entity.Property(s => s.SeatNumber)
+                  .IsRequired();
+
+            entity.Property(s => s.SeatType)
+                  .IsRequired()
+                  .HasMaxLength(30);
+
+            entity.HasOne<Screen>()
+                  .WithMany()
+                  .HasForeignKey(s => s.ScreenId);
+
+            entity.HasIndex(s => new
+            {
+                s.ScreenId,
+                s.RowName,
+                s.SeatNumber
+            }).IsUnique();
+
+            entity.ToTable(t =>
+                t.HasCheckConstraint(
+                    "CK_Seats_SeatNumber",
+                    "[SeatNumber] > 0"));
+        });
+
+        // Show table configuration
+
+        modelBuilder.Entity<Show>(entity =>
+        {
+            entity.HasKey(s => s.ShowId);
+
+            entity.Property(s => s.StartTime)
+                  .IsRequired();
+
+            entity.Property(s => s.EndTime)
+                  .IsRequired();
+
+            entity.Property(s => s.TicketPrice)
+                  .HasColumnType("decimal(10,2)")
+                  .IsRequired();
+
+            entity.HasOne<Movie>()
+                  .WithMany()
+                  .HasForeignKey(s => s.MovieId);
+
+            entity.HasOne<Screen>()
+                  .WithMany()
+                  .HasForeignKey(s => s.ScreenId);
+
+            entity.ToTable(t =>
+            {
+                t.HasCheckConstraint(
+                    "CK_Shows_EndTime",
+                    "[EndTime] > [StartTime]");
+
+                t.HasCheckConstraint(
+                    "CK_Shows_TicketPrice",
+                    "[TicketPrice] >= 0");
+            });
         });
     }
 }
