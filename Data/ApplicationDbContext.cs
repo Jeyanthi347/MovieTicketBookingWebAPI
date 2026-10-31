@@ -31,6 +31,13 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<ShowSeat> ShowSeats { get; set; }
 
+    // Booking table
+    public DbSet<Booking> Bookings { get; set; }
+
+
+    // BookingSeat table
+    public DbSet<BookingSeat> BookingSeats { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -180,6 +187,82 @@ public class ApplicationDbContext : DbContext
 
             entity.HasIndex(ss => new { ss.ShowId, ss.SeatId })
                   .IsUnique();
+        });
+
+
+        // Booking table configuration
+        modelBuilder.Entity<Booking>(entity =>
+        {
+            entity.HasKey(b => b.BookingId);
+
+            entity.Property(b => b.BookingReference)
+                  .IsRequired()
+                  .HasMaxLength(30);
+
+            entity.HasIndex(b => b.BookingReference)
+                  .IsUnique();
+
+            entity.Property(b => b.CustomerName)
+                  .IsRequired()
+                  .HasMaxLength(100);
+
+            entity.Property(b => b.CustomerEmail)
+                  .IsRequired()
+                  .HasMaxLength(150);
+
+            entity.Property(b => b.CustomerPhone)
+                  .IsRequired()
+                  .HasMaxLength(15);
+
+            entity.Property(b => b.BookingDate)
+                  .IsRequired();
+
+            entity.Property(b => b.TotalAmount)
+                  .HasColumnType("decimal(10,2)")
+                  .IsRequired();
+
+            entity.Property(b => b.Status)
+                  .IsRequired()
+                  .HasMaxLength(20);
+
+            entity.HasOne<Show>()
+                  .WithMany()
+                  .HasForeignKey(b => b.ShowId)
+                  .OnDelete(DeleteBehavior.NoAction);
+
+            entity.ToTable(t =>
+            {
+                t.HasCheckConstraint(
+                    "CK_Bookings_TotalAmount",
+                    "[TotalAmount] >= 0");
+            });
+        });
+
+        // BookingSeat table configuration
+        modelBuilder.Entity<BookingSeat>(entity =>
+        {
+            entity.HasKey(bs => bs.BookingSeatId);
+
+            entity.Property(bs => bs.Price)
+                  .HasColumnType("decimal(10,2)")
+                  .IsRequired();
+
+            entity.HasOne<Booking>()
+                  .WithMany()
+                  .HasForeignKey(bs => bs.BookingId)
+                  .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne<Seat>()
+                  .WithMany()
+                  .HasForeignKey(bs => bs.SeatId)
+                  .OnDelete(DeleteBehavior.NoAction);
+
+            entity.ToTable(t =>
+            {
+                t.HasCheckConstraint(
+                    "CK_BookingSeats_Price",
+                    "[Price] >= 0");
+            });
         });
     }
 }
