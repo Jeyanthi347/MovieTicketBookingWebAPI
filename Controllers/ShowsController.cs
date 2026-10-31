@@ -17,7 +17,7 @@ public class ShowsController : ControllerBase
     }
 
     // POST: api/shows
-    // Create a new show
+    // Create a new show and automatically generate ShowSeats
     [HttpPost]
     public async Task<IActionResult> Create(CreateShowDto dto)
     {
@@ -31,6 +31,10 @@ public class ShowsController : ControllerBase
                 show);
         }
         catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (InvalidOperationException ex)
         {
             return BadRequest(ex.Message);
         }
@@ -61,6 +65,19 @@ public class ShowsController : ControllerBase
             return NotFound("Show not found.");
 
         return Ok(show);
+    }
+
+    // GET: api/shows/1/seats
+    // Get all seats and their availability for a particular show
+    [HttpGet("{showId}/seats")]
+    public async Task<IActionResult> GetSeatLayout(int showId)
+    {
+        var seats = await service.GetSeatLayoutAsync(showId);
+
+        if (seats == null)
+            return NotFound("Show not found.");
+
+        return Ok(seats);
     }
 
     // PUT: api/shows/1

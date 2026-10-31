@@ -26,6 +26,11 @@ public class ApplicationDbContext : DbContext
     //show table
     public DbSet<Show> Shows { get; set; }
 
+
+    // ShowSeat table
+
+    public DbSet<ShowSeat> ShowSeats { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -152,6 +157,29 @@ public class ApplicationDbContext : DbContext
                     "CK_Shows_TicketPrice",
                     "[TicketPrice] >= 0");
             });
+        });
+
+
+        modelBuilder.Entity<ShowSeat>(entity =>
+        {
+            entity.HasKey(ss => ss.ShowSeatId);
+
+            entity.Property(ss => ss.Status)
+                  .IsRequired()
+                  .HasMaxLength(20);
+
+            entity.HasOne<Show>()
+                  .WithMany()
+                  .HasForeignKey(ss => ss.ShowId)
+                  .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne<Seat>()
+                  .WithMany()
+                  .HasForeignKey(ss => ss.SeatId)
+                  .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasIndex(ss => new { ss.ShowId, ss.SeatId })
+                  .IsUnique();
         });
     }
 }

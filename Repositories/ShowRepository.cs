@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieTicketBookingWebAPI.Data;
+using MovieTicketBookingWebAPI.DTOs;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
 
@@ -27,13 +28,86 @@ public class ShowRepository : IShowRepository
             .FirstOrDefaultAsync(s => s.ShowId == id);
     }
 
-    // Add a new show
+    // Add a new show and automatically generate ShowSeats
     public async Task<Show> AddAsync(Show show)
     {
-        await context.Shows.AddAsync(show);
-        await context.SaveChangesAsync();
+        // Get all physical seats belonging to this screen
+        var seats = await context.Seats
+            .Where(s => s.ScreenId == show.ScreenId)
+            .ToListAsync();
 
-        return show;
+        if (seats.Count == 0)
+        {
+            throw new InvalidOperationException(
+                "No seats are available for this screen.");
+        }
+
+        // Start a database transaction
+        await using var transaction =
+            await context.Database.BeginTransactionAsync();
+
+        try
+        {
+            // Save the show first to generate its ShowId
+            await context.Shows.AddAsync(show);
+            await context.SaveChangesAsync();
+
+            // Create one ShowSeat for every physical seat
+            var showSeats = new List<ShowSeat>();
+
+            foreach (var seat in seats)
+            {
+                ShowSeat showSeat = new ShowSeat
+                {
+                    ShowId = show.ShowId,
+                    SeatId = seat.SeatId,
+                    Status = "Available"
+                };
+
+                showSeats.Add(showSeat);
+            }
+
+            // Save all generated ShowSeats
+            await context.ShowSeats.AddRangeAsync(showSeats);
+            await context.SaveChangesAsync();
+
+            // Complete the transaction
+            await transaction.CommitAsync();
+
+            return show;
+        }
+        catch
+        {
+            // Undo database changes if anything fails
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
+    // Get the seat layout for a particular show
+    public async Task<List<ShowSeatResponseDto>> GetSeatLayoutAsync(int showId)
+    {
+        var seatLayout = await (
+            from showSeat in context.ShowSeats
+            join seat in context.Seats
+                on showSeat.SeatId equals seat.SeatId
+            join show in context.Shows
+                on showSeat.ShowId equals show.ShowId
+            where showSeat.ShowId == showId
+            orderby seat.RowName, seat.SeatNumber
+            select new ShowSeatResponseDto
+            {
+                SeatId = seat.SeatId,
+                RowName = seat.RowName,
+                SeatNumber = seat.SeatNumber,
+                SeatLabel = seat.RowName + seat.SeatNumber,
+                SeatType = seat.SeatType,
+                Price = show.TicketPrice,
+                Status = showSeat.Status
+            }
+        ).ToListAsync();
+
+        return seatLayout;
     }
 
     // Update an existing show

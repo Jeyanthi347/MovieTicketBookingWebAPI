@@ -80,6 +80,19 @@ public class ShowService : IShowService
         };
     }
 
+    // Get seat layout for a particular show
+    public async Task<List<ShowSeatResponseDto>?> GetSeatLayoutAsync(int showId)
+    {
+        // First check whether the show exists
+        var show = await repository.GetByIdAsync(showId);
+
+        if (show == null)
+            return null;
+
+        // Get all seats and their availability for this show
+        return await repository.GetSeatLayoutAsync(showId);
+    }
+
     // Update an existing show
     public async Task<ShowResponseDto?> UpdateAsync(int id, UpdateShowDto dto)
     {

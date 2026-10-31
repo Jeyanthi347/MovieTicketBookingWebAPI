@@ -13,6 +13,9 @@ public interface IShowService
     // Create a new show
     Task<ShowResponseDto> CreateAsync(CreateShowDto dto);
 
+    // Get seat layout for a particular show
+    Task<List<ShowSeatResponseDto>?> GetSeatLayoutAsync(int showId);
+
     // Update an existing show
     Task<ShowResponseDto?> UpdateAsync(int id, UpdateShowDto dto);
 
