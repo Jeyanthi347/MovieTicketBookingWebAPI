@@ -299,6 +299,85 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.ShowsController",
+    "Method": "Create",
+    "RelativePath": "api/Shows",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.CreateShowDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.ShowsController",
+    "Method": "GetAll",
+    "RelativePath": "api/Shows",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.ShowsController",
+    "Method": "GetById",
+    "RelativePath": "api/Shows/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.ShowsController",
+    "Method": "Update",
+    "RelativePath": "api/Shows/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.UpdateShowDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.ShowsController",
+    "Method": "Delete",
+    "RelativePath": "api/Shows/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "MovieTicketBookingWebAPI.Controllers.TheatresController",
     "Method": "CreateTheatre",
     "RelativePath": "api/Theatres",

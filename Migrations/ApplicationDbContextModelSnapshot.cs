@@ -126,6 +126,43 @@ namespace MovieTicketBookingWebAPI.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MovieTicketBookingWebAPI.Models.Show", b =>
+                {
+                    b.Property<int>("ShowId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShowId"));
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ScreenId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("TicketPrice")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.HasKey("ShowId");
+
+                    b.HasIndex("MovieId");
+
+                    b.HasIndex("ScreenId");
+
+                    b.ToTable("Shows", t =>
+                        {
+                            t.HasCheckConstraint("CK_Shows_EndTime", "[EndTime] > [StartTime]");
+
+                            t.HasCheckConstraint("CK_Shows_TicketPrice", "[TicketPrice] >= 0");
+                        });
+                });
+
             modelBuilder.Entity("MovieTicketBookingWebAPI.Models.Theatre", b =>
                 {
                     b.Property<int>("TheatreId")
@@ -160,6 +197,21 @@ namespace MovieTicketBookingWebAPI.Migrations
 
             modelBuilder.Entity("MovieTicketBookingWebAPI.Models.Seat", b =>
                 {
+                    b.HasOne("MovieTicketBookingWebAPI.Models.Screen", null)
+                        .WithMany()
+                        .HasForeignKey("ScreenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MovieTicketBookingWebAPI.Models.Show", b =>
+                {
+                    b.HasOne("MovieTicketBookingWebAPI.Models.Movie", null)
+                        .WithMany()
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MovieTicketBookingWebAPI.Models.Screen", null)
                         .WithMany()
                         .HasForeignKey("ScreenId")

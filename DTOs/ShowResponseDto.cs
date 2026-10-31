@@ -1,6 +1,16 @@
-﻿namespace MovieTicketBookingWebAPI.DTOs
+﻿namespace MovieTicketBookingWebAPI.DTOs;
+
+public class ShowResponseDto
 {
-    public class ShowResponseDto
-    {
-    }
+    public int ShowId { get; set; }
+
+    public int MovieId { get; set; }
+
+    public int ScreenId { get; set; }
+
+    public DateTime StartTime { get; set; }
+
+    public DateTime EndTime { get; set; }
+
+    public decimal TicketPrice { get; set; }
 }
