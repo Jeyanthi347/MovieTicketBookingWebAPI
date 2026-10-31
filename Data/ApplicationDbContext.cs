@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieTicketBookingWebAPI.Models;
 
+
 namespace MovieTicketBookingWebAPI.Data;
 
 public class ApplicationDbContext : DbContext
@@ -15,6 +16,8 @@ public class ApplicationDbContext : DbContext
 
     // Theatre table
     public DbSet<Theatre> Theatres { get; set; }
+
+    public DbSet<Screen> Screens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -57,6 +60,20 @@ public class ApplicationDbContext : DbContext
             entity.Property(t => t.Location)
                   .IsRequired()
                   .HasMaxLength(200);
+        });
+
+        // Screen table configuration
+        modelBuilder.Entity<Screen>(entity =>
+        {
+            entity.HasKey(s => s.ScreenId);
+
+            entity.Property(s => s.ScreenName)
+                  .IsRequired()
+                  .HasMaxLength(50);
+
+            entity.HasOne<Theatre>()
+                  .WithMany()
+                  .HasForeignKey(s => s.TheatreId);
         });
     }
 }
