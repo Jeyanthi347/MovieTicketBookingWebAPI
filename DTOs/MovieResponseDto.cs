@@ -17,5 +17,7 @@ public class MovieResponseDto
 
     public DateTime ReleaseDate { get; set; }
 
+    public decimal Rating { get; set; }
+
     public bool IsActive { get; set; }
 }

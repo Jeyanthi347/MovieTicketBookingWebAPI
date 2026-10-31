@@ -117,5 +117,84 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.TheatresController",
+    "Method": "CreateTheatre",
+    "RelativePath": "api/Theatres",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.CreateTheatreDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.TheatresController",
+    "Method": "GetAllTheatres",
+    "RelativePath": "api/Theatres",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.TheatresController",
+    "Method": "GetTheatreById",
+    "RelativePath": "api/Theatres/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.TheatresController",
+    "Method": "UpdateTheatre",
+    "RelativePath": "api/Theatres/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.UpdateTheatreDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.TheatresController",
+    "Method": "DeleteTheatre",
+    "RelativePath": "api/Theatres/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   }
 ]

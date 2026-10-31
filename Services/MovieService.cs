@@ -29,6 +29,7 @@ public class MovieService : IMovieService
             Description = movie.Description,
             Language = movie.Language,
             ReleaseDate = movie.ReleaseDate,
+            Rating = movie.Rating,
             IsActive = movie.IsActive
         }).ToList();
     }
@@ -52,6 +53,7 @@ public class MovieService : IMovieService
             Description = movie.Description,
             Language = movie.Language,
             ReleaseDate = movie.ReleaseDate,
+            Rating = movie.Rating,
             IsActive = movie.IsActive
         };
     }
@@ -67,6 +69,7 @@ public class MovieService : IMovieService
             Description = dto.Description,
             Language = dto.Language,
             ReleaseDate = dto.ReleaseDate,
+            Rating = dto.Rating,
             IsActive = true
         };
 
@@ -81,12 +84,15 @@ public class MovieService : IMovieService
             Description = createdMovie.Description,
             Language = createdMovie.Language,
             ReleaseDate = createdMovie.ReleaseDate,
+            Rating = createdMovie.Rating,
             IsActive = createdMovie.IsActive
         };
     }
 
     // Update movie
-    public async Task<MovieResponseDto?> UpdateAsync(int id, UpdateMovieDto dto)
+    public async Task<MovieResponseDto?> UpdateAsync(
+        int id,
+        UpdateMovieDto dto)
     {
         var movie = new Movie
         {
@@ -96,6 +102,7 @@ public class MovieService : IMovieService
             Description = dto.Description,
             Language = dto.Language,
             ReleaseDate = dto.ReleaseDate,
+            Rating = dto.Rating,
             IsActive = dto.IsActive
         };
 
@@ -115,6 +122,7 @@ public class MovieService : IMovieService
             Description = updatedMovie.Description,
             Language = updatedMovie.Language,
             ReleaseDate = updatedMovie.ReleaseDate,
+            Rating = updatedMovie.Rating,
             IsActive = updatedMovie.IsActive
         };
     }

@@ -15,19 +15,16 @@ public class MovieRepository : IMovieRepository
         this.context = context;
     }
 
-    // Get all movies
     public async Task<List<Movie>> GetAllAsync()
     {
         return await context.Movies.ToListAsync();
     }
 
-    // Get movie by ID
     public async Task<Movie?> GetByIdAsync(int id)
     {
         return await context.Movies.FindAsync(id);
     }
 
-    // Add a new movie
     public async Task<Movie> AddAsync(Movie movie)
     {
         await context.Movies.AddAsync(movie);
@@ -37,7 +34,6 @@ public class MovieRepository : IMovieRepository
         return movie;
     }
 
-    // Update an existing movie
     public async Task<Movie?> UpdateAsync(int id, Movie movie)
     {
         var existingMovie = await context.Movies.FindAsync(id);
@@ -53,6 +49,7 @@ public class MovieRepository : IMovieRepository
         existingMovie.Description = movie.Description;
         existingMovie.Language = movie.Language;
         existingMovie.ReleaseDate = movie.ReleaseDate;
+        existingMovie.Rating = movie.Rating;
         existingMovie.IsActive = movie.IsActive;
 
         await context.SaveChangesAsync();
@@ -60,7 +57,6 @@ public class MovieRepository : IMovieRepository
         return existingMovie;
     }
 
-    // Delete a movie
     public async Task<bool> DeleteAsync(int id)
     {
         var movie = await context.Movies.FindAsync(id);

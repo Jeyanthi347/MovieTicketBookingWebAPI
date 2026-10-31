@@ -164,3 +164,4 @@ C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\ob
 C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\obj\Debug\net10.0\MovieTicketBookingWebAPI.pdb
 C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\obj\Debug\net10.0\MovieTicketBookingWebAPI.genruntimeconfig.cache
 C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\obj\Debug\net10.0\ref\MovieTicketBookingWebAPI.dll
+C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\obj\Debug\net10.0\MovieTicketBookingWebAPI.sourcelink.json

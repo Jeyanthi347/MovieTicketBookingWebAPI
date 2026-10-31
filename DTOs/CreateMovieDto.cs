@@ -25,4 +25,7 @@ public class CreateMovieDto
     public string Language { get; set; } = string.Empty;
 
     public DateTime ReleaseDate { get; set; }
+
+    [Range(typeof(decimal), "0", "10")]
+    public decimal Rating { get; set; }
 }

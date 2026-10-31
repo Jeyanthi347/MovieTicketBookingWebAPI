@@ -26,5 +26,8 @@ public class UpdateMovieDto
 
     public DateTime ReleaseDate { get; set; }
 
+    [Range(typeof(decimal), "0", "10")]
+    public decimal Rating { get; set; }
+
     public bool IsActive { get; set; }
 }

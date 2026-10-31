@@ -41,7 +41,8 @@ public class MoviesController : ControllerBase
 
     // POST: api/Movies
     [HttpPost]
-    public async Task<ActionResult<MovieResponseDto>> Create(CreateMovieDto dto)
+    public async Task<ActionResult<MovieResponseDto>> Create(
+        CreateMovieDto dto)
     {
         var movie = await movieService.CreateAsync(dto);
 
