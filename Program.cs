@@ -10,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add controllers
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // Configure SQL Server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -59,9 +61,15 @@ builder.Services.AddScoped<IRatingService, RatingService>();
 var app = builder.Build();
 
 // Configure HTTP request pipeline
+//if (app.Environment.IsDevelopment())
+//{
+//    app.MapOpenApi();
+//}
+
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

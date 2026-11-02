@@ -1,17 +1,9 @@
 {
-  "openapi": "3.1.1",
+  "openapi": "3.0.4",
   "info": {
-    "title": "MovieTicketBookingWebAPI | v1",
-    "version": "1.0.0"
+    "title": "MovieTicketBookingWebAPI",
+    "version": "1.0"
   },
-  "servers": [
-    {
-      "url": "https://localhost:7142"
-    },
-    {
-      "url": "http://localhost:5067"
-    }
-  ],
   "paths": {
     "/api/Bookings": {
       "get": {
@@ -45,8 +37,7 @@
                 "$ref": "#/components/schemas/CreateBookingDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -66,11 +57,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -93,11 +80,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -120,11 +103,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -194,8 +173,7 @@
                 "$ref": "#/components/schemas/CreateMovieDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -232,11 +210,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -274,11 +248,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -300,8 +270,7 @@
                 "$ref": "#/components/schemas/UpdateMovieDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -336,11 +305,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -384,8 +349,7 @@
                 "$ref": "#/components/schemas/CreateRatingDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -405,11 +369,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -430,11 +390,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -456,8 +412,7 @@
                 "$ref": "#/components/schemas/UpdateRatingDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -475,11 +430,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -502,11 +453,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -529,11 +476,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -567,8 +510,7 @@
                 "$ref": "#/components/schemas/CreateScreenDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -598,11 +540,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -623,11 +561,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -649,8 +583,7 @@
                 "$ref": "#/components/schemas/UpdateScreenDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -668,11 +601,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -706,8 +635,7 @@
                 "$ref": "#/components/schemas/CreateSeatDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -738,8 +666,7 @@
                 "$ref": "#/components/schemas/BulkCreateSeatsDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -759,11 +686,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -786,11 +709,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -811,11 +730,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -837,8 +752,7 @@
                 "$ref": "#/components/schemas/UpdateSeatDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -856,11 +770,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -894,8 +804,7 @@
                 "$ref": "#/components/schemas/CreateShowDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -925,11 +834,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -950,11 +855,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -976,8 +877,7 @@
                 "$ref": "#/components/schemas/UpdateShowDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -995,11 +895,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -1022,11 +918,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -1060,8 +952,7 @@
                 "$ref": "#/components/schemas/CreateTheatreDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -1091,11 +982,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -1116,11 +1003,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -1142,8 +1025,7 @@
                 "$ref": "#/components/schemas/UpdateTheatreDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -1161,11 +1043,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -1188,11 +1066,7 @@
         "type": "object",
         "properties": {
           "screenId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "seats": {
@@ -1201,47 +1075,45 @@
               "$ref": "#/components/schemas/CreateSeatItemDto"
             }
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CreateBookingDto": {
         "type": "object",
         "properties": {
           "customerName": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "customerEmail": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "customerPhone": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "showId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "seatIds": {
             "type": "array",
             "items": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
-            }
+            },
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CreateMovieDto": {
         "required": [
-          "movieName",
-          "genre",
           "description",
-          "language"
+          "genre",
+          "language",
+          "movieName"
         ],
         "type": "object",
         "properties": {
@@ -1258,11 +1130,7 @@
           "durationMinutes": {
             "maximum": 500,
             "minimum": 1,
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "description": {
@@ -1282,117 +1150,90 @@
           "rating": {
             "maximum": 10,
             "minimum": 0,
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
+            "type": "number",
             "format": "double"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CreateRatingDto": {
         "type": "object",
         "properties": {
           "bookingId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "movieId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "null",
-              "integer",
-              "string"
-            ],
-            "format": "int32"
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           },
           "theatreId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "null",
-              "integer",
-              "string"
-            ],
-            "format": "int32"
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           },
           "ratingValue": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
+            "type": "number",
             "format": "double"
           },
           "review": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CreateScreenDto": {
         "required": [
-          "theatreId",
-          "screenName"
+          "screenName",
+          "theatreId"
         ],
         "type": "object",
         "properties": {
           "theatreId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "screenName": {
             "maxLength": 50,
+            "minLength": 1,
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CreateSeatDto": {
         "required": [
-          "screenId",
           "rowName",
+          "screenId",
           "seatNumber",
           "seatType"
         ],
         "type": "object",
         "properties": {
           "screenId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "rowName": {
             "maxLength": 5,
+            "minLength": 1,
             "type": "string"
           },
           "seatNumber": {
             "maximum": 2147483647,
             "minimum": 1,
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "seatType": {
             "maxLength": 30,
+            "minLength": 1,
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CreateSeatItemDto": {
         "required": [
@@ -1404,48 +1245,39 @@
         "properties": {
           "rowName": {
             "maxLength": 5,
+            "minLength": 1,
             "type": "string"
           },
           "seatNumber": {
             "maximum": 2147483647,
             "minimum": 1,
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "seatType": {
             "maxLength": 30,
+            "minLength": 1,
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CreateShowDto": {
         "required": [
+          "endTime",
           "movieId",
           "screenId",
           "startTime",
-          "endTime",
           "ticketPrice"
         ],
         "type": "object",
         "properties": {
           "movieId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "screenId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "startTime": {
@@ -1459,86 +1291,79 @@
           "ticketPrice": {
             "maximum": 99999999.99,
             "minimum": 0,
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
+            "type": "number",
             "format": "double"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CreateTheatreDto": {
         "required": [
-          "name",
-          "location"
+          "location",
+          "name"
         ],
         "type": "object",
         "properties": {
           "name": {
             "maxLength": 150,
+            "minLength": 1,
             "type": "string"
           },
           "location": {
             "maxLength": 200,
+            "minLength": 1,
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "MovieResponseDto": {
         "type": "object",
         "properties": {
           "movieId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "movieName": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "genre": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "durationMinutes": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "language": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "releaseDate": {
             "type": "string",
             "format": "date-time"
           },
           "rating": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
+            "type": "number",
             "format": "double"
           },
           "isActive": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "UpdateMovieDto": {
         "required": [
-          "movieName",
-          "genre",
           "description",
-          "language"
+          "genre",
+          "language",
+          "movieName"
         ],
         "type": "object",
         "properties": {
@@ -1555,11 +1380,7 @@
           "durationMinutes": {
             "maximum": 500,
             "minimum": 1,
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "description": {
@@ -1579,119 +1400,96 @@
           "rating": {
             "maximum": 10,
             "minimum": 0,
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
+            "type": "number",
             "format": "double"
           },
           "isActive": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "UpdateRatingDto": {
         "type": "object",
         "properties": {
           "ratingValue": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
+            "type": "number",
             "format": "double"
           },
           "review": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       },
       "UpdateScreenDto": {
         "required": [
-          "theatreId",
-          "screenName"
+          "screenName",
+          "theatreId"
         ],
         "type": "object",
         "properties": {
           "theatreId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "screenName": {
             "maxLength": 50,
+            "minLength": 1,
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "UpdateSeatDto": {
         "required": [
-          "screenId",
           "rowName",
+          "screenId",
           "seatNumber",
           "seatType"
         ],
         "type": "object",
         "properties": {
           "screenId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "rowName": {
             "maxLength": 5,
+            "minLength": 1,
             "type": "string"
           },
           "seatNumber": {
             "maximum": 2147483647,
             "minimum": 1,
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "seatType": {
             "maxLength": 30,
+            "minLength": 1,
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "UpdateShowDto": {
         "required": [
+          "endTime",
           "movieId",
           "screenId",
           "startTime",
-          "endTime",
           "ticketPrice"
         ],
         "type": "object",
         "properties": {
           "movieId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "screenId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "startTime": {
@@ -1705,31 +1503,31 @@
           "ticketPrice": {
             "maximum": 99999999.99,
             "minimum": 0,
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
+            "type": "number",
             "format": "double"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "UpdateTheatreDto": {
         "required": [
-          "name",
-          "location"
+          "location",
+          "name"
         ],
         "type": "object",
         "properties": {
           "name": {
             "maxLength": 150,
+            "minLength": 1,
             "type": "string"
           },
           "location": {
             "maxLength": 200,
+            "minLength": 1,
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       }
     }
   },
