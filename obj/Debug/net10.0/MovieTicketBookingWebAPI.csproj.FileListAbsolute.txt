@@ -157,7 +157,6 @@ C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\ob
 C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\obj\Debug\net10.0\staticwebassets.development.json
 C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\obj\Debug\net10.0\staticwebassets.build.endpoints.json
 C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\obj\Debug\net10.0\swae.build.ex.cache
-C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
 C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\obj\Debug\net10.0\MovieTic.B0971268.Up2Date
 C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\obj\Debug\net10.0\MovieTicketBookingWebAPI.dll
 C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\obj\Debug\net10.0\refint\MovieTicketBookingWebAPI.dll
@@ -168,3 +167,6 @@ C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\ob
 C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\bin\Debug\net10.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\bin\Debug\net10.0\Microsoft.Bcl.Cryptography.dll
+C:\Users\jeyan\source\repos\MovieTicketBookingWebAPI\MovieTicketBookingWebAPI\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt

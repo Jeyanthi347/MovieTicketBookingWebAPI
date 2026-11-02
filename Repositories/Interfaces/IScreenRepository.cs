@@ -1,10 +1,13 @@
-﻿using MovieTicketBookingWebAPI.Models;
+﻿
+using MovieTicketBookingWebAPI.Models;
 
 namespace MovieTicketBookingWebAPI.Repositories.Interfaces;
 
 public interface IScreenRepository
 {
     Task<List<Screen>> GetAllAsync();
+
+    Task<List<Screen>> GetByTheatreIdAsync(int theatreId);
 
     Task<Screen?> GetByIdAsync(int id);
 

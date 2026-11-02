@@ -1,5 +1,4 @@
-﻿
-using MovieTicketBookingWebAPI.DTOs.Ratings;
+﻿using MovieTicketBookingWebAPI.DTOs.Ratings;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
 using MovieTicketBookingWebAPI.Services.Interfaces;
@@ -15,89 +14,80 @@ namespace MovieTicketBookingWebAPI.Services
             this.repository = repository;
         }
 
-        // Get all ratings
         public async Task<List<RatingResponseDto>> GetAllAsync()
         {
             var ratings = await repository.GetAllAsync();
 
-            return ratings.Select(r => MapToDto(r)).ToList();
+            return ratings.Select(MapToDto).ToList();
         }
 
-        // Get rating by ID
         public async Task<RatingResponseDto?> GetByIdAsync(int id)
         {
             var rating = await repository.GetByIdAsync(id);
 
-            if (rating == null)
-            {
-                return null;
-            }
-
-            return MapToDto(rating);
+            return rating == null ? null : MapToDto(rating);
         }
 
-        // Get movie ratings
-        public async Task<List<RatingResponseDto>> GetMovieRatingsAsync(int movieId)
+        public async Task<List<RatingResponseDto>> GetMovieRatingsAsync(
+            int movieId)
         {
             var ratings = await repository.GetMovieRatingsAsync(movieId);
 
-            return ratings.Select(r => MapToDto(r)).ToList();
+            return ratings.Select(MapToDto).ToList();
         }
 
-        // Get theatre ratings
-        public async Task<List<RatingResponseDto>> GetTheatreRatingsAsync(int theatreId)
+        public async Task<List<RatingResponseDto>> GetTheatreRatingsAsync(
+            int theatreId)
         {
             var ratings = await repository.GetTheatreRatingsAsync(theatreId);
 
-            return ratings.Select(r => MapToDto(r)).ToList();
+            return ratings.Select(MapToDto).ToList();
         }
 
-        // Create rating
-        public async Task<RatingResponseDto?> CreateAsync(CreateRatingDto dto)
+        public async Task<RatingResponseDto?> CreateAsync(
+            CreateRatingDto dto, int? userId, bool isAdmin)
         {
-            // Validate that exactly one target is selected
+            // Exactly one target must be selected.
             if (dto.MovieId.HasValue == dto.TheatreId.HasValue)
-            {
-                return null;
-            }
+                throw new ArgumentException(
+                    "Provide either MovieId or TheatreId, not both.");
 
-            // Validate rating value
+            // Rating must be between 1 and 10.
             if (dto.RatingValue < 1 || dto.RatingValue > 10)
+                throw new ArgumentException(
+                    "Rating must be between 1 and 10.");
+
+            // Booking must be confirmed.
+            if (!await repository.IsBookingConfirmedAsync(dto.BookingId))
+                throw new ArgumentException(
+                    "Only confirmed bookings can be rated.");
+
+            // Customers can rate only their own bookings.
+            if (!isAdmin)
             {
-                return null;
+                if (!userId.HasValue ||
+                    !await repository.IsBookingOwnedByUserAsync(
+                        dto.BookingId, userId.Value))
+                {
+                    throw new UnauthorizedAccessException(
+                        "You can rate only your own bookings.");
+                }
             }
 
-            // Validate booking status
-            bool isConfirmed =
-                await repository.IsBookingConfirmedAsync(dto.BookingId);
-
-            if (!isConfirmed)
+            // Verify that the booking belongs to the selected movie/theatre.
+            if (!await repository.IsValidBookingTargetAsync(
+                dto.BookingId, dto.MovieId, dto.TheatreId))
             {
-                return null;
+                throw new ArgumentException(
+                    "The selected movie or theatre does not belong to this booking.");
             }
 
-            // Validate selected movie or theatre belongs to booking
-            bool isValidTarget =
-                await repository.IsValidBookingTargetAsync(
-                    dto.BookingId,
-                    dto.MovieId,
-                    dto.TheatreId);
-
-            if (!isValidTarget)
+            // Prevent duplicate ratings for the same booking and target.
+            if (await repository.RatingExistsAsync(
+                dto.BookingId, dto.MovieId, dto.TheatreId))
             {
-                return null;
-            }
-
-            // Prevent duplicate ratings
-            bool ratingExists =
-                await repository.RatingExistsAsync(
-                    dto.BookingId,
-                    dto.MovieId,
-                    dto.TheatreId);
-
-            if (ratingExists)
-            {
-                return null;
+                throw new ArgumentException(
+                    "A rating already exists for this booking and target.");
             }
 
             var rating = new Rating
@@ -117,43 +107,56 @@ namespace MovieTicketBookingWebAPI.Services
             return result == null ? null : MapToDto(result);
         }
 
-        // Update rating
         public async Task<RatingResponseDto?> UpdateAsync(
-            int id,
-            UpdateRatingDto dto)
+            int id, UpdateRatingDto dto, int? userId)
         {
             if (dto.RatingValue < 1 || dto.RatingValue > 10)
-            {
-                return null;
-            }
+                throw new ArgumentException(
+                    "Rating must be between 1 and 10.");
 
             var rating = await repository.GetByIdAsync(id);
 
             if (rating == null)
-            {
                 return null;
+
+            // If userId is provided, the caller is a Customer.
+            // Admin passes null and can update any rating.
+            if (userId.HasValue &&
+                rating.Booking.UserId != userId.Value)
+            {
+                throw new UnauthorizedAccessException(
+                    "You can update only your own ratings.");
             }
 
             rating.RatingValue = dto.RatingValue;
             rating.Review = dto.Review;
 
-            var updatedRating = await repository.UpdateAsync(id, rating);
+            var updatedRating = await repository.UpdateAsync(rating);
 
-            if (updatedRating == null)
-            {
-                return null;
-            }
-
-            return MapToDto(updatedRating);
+            return updatedRating == null
+                ? null
+                : MapToDto(updatedRating);
         }
 
-        // Delete rating
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, int? userId)
         {
+            var rating = await repository.GetByIdAsync(id);
+
+            if (rating == null)
+                return false;
+
+            // Customers can delete only their own ratings.
+            // Admin passes null and can delete any rating.
+            if (userId.HasValue &&
+                rating.Booking.UserId != userId.Value)
+            {
+                throw new UnauthorizedAccessException(
+                    "You can delete only your own ratings.");
+            }
+
             return await repository.DeleteAsync(id);
         }
 
-        // Convert Rating model into RatingResponseDto
         private static RatingResponseDto MapToDto(Rating rating)
         {
             return new RatingResponseDto
@@ -162,7 +165,7 @@ namespace MovieTicketBookingWebAPI.Services
                 BookingId = rating.BookingId,
                 CustomerName = rating.Booking.CustomerName,
                 MovieName = rating.Movie?.MovieName,
-                TheatreName = rating.Theatre?.Name,
+                TheatreName = rating.Theatre?.TheatreName,
                 RatingValue = rating.RatingValue,
                 Review = rating.Review
             };

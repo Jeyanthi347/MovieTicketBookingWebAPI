@@ -1,4 +1,5 @@
-﻿using MovieTicketBookingWebAPI.DTOs.Shows;
+﻿
+using MovieTicketBookingWebAPI.DTOs.Shows;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
 using MovieTicketBookingWebAPI.Services.Interfaces;
@@ -8,10 +9,34 @@ namespace MovieTicketBookingWebAPI.Services;
 public class ShowService : IShowService
 {
     private readonly IShowRepository repository;
+    private readonly IScreenRepository screenRepository;
+    private readonly ITheatreRepository theatreRepository;
 
-    public ShowService(IShowRepository repository)
+    public ShowService(
+        IShowRepository repository,
+        IScreenRepository screenRepository,
+        ITheatreRepository theatreRepository)
     {
         this.repository = repository;
+        this.screenRepository = screenRepository;
+        this.theatreRepository = theatreRepository;
+    }
+
+    // Check whether a screen belongs to the manager's assigned theatre
+    private async Task<bool> IsScreenAssignedToManagerAsync(
+        int screenId,
+        int managerUserId)
+    {
+        var theatre = await theatreRepository
+            .GetByManagerUserIdAsync(managerUserId);
+
+        if (theatre == null)
+            return false;
+
+        var screens = await screenRepository
+            .GetByTheatreIdAsync(theatre.TheatreId);
+
+        return screens.Any(s => s.ScreenId == screenId);
     }
 
     // Get all shows
@@ -50,8 +75,17 @@ public class ShowService : IShowService
     }
 
     // Create a new show
-    public async Task<ShowResponseDto> CreateAsync(CreateShowDto dto)
+    public async Task<ShowResponseDto> CreateAsync(
+        CreateShowDto dto,
+        int? managerUserId = null)
     {
+        if (managerUserId.HasValue &&
+            !await IsScreenAssignedToManagerAsync(
+                dto.ScreenId, managerUserId.Value))
+        {
+            throw new UnauthorizedAccessException();
+        }
+
         if (dto.EndTime <= dto.StartTime)
             throw new ArgumentException("End time must be later than start time.");
 
@@ -83,18 +117,19 @@ public class ShowService : IShowService
     // Get seat layout for a particular show
     public async Task<List<ShowSeatResponseDto>?> GetSeatLayoutAsync(int showId)
     {
-        // First check whether the show exists
         var show = await repository.GetByIdAsync(showId);
 
         if (show == null)
             return null;
 
-        // Get all seats and their availability for this show
         return await repository.GetSeatLayoutAsync(showId);
     }
 
     // Update an existing show
-    public async Task<ShowResponseDto?> UpdateAsync(int id, UpdateShowDto dto)
+    public async Task<ShowResponseDto?> UpdateAsync(
+        int id,
+        UpdateShowDto dto,
+        int? managerUserId = null)
     {
         if (dto.EndTime <= dto.StartTime)
             throw new ArgumentException("End time must be later than start time.");
@@ -106,6 +141,20 @@ public class ShowService : IShowService
 
         if (show == null)
             return null;
+
+        if (managerUserId.HasValue)
+        {
+            bool existingScreenAllowed =
+                await IsScreenAssignedToManagerAsync(
+                    show.ScreenId, managerUserId.Value);
+
+            bool newScreenAllowed =
+                await IsScreenAssignedToManagerAsync(
+                    dto.ScreenId, managerUserId.Value);
+
+            if (!existingScreenAllowed || !newScreenAllowed)
+                throw new UnauthorizedAccessException();
+        }
 
         show.MovieId = dto.MovieId;
         show.ScreenId = dto.ScreenId;
@@ -127,8 +176,22 @@ public class ShowService : IShowService
     }
 
     // Delete a show
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(
+        int id,
+        int? managerUserId = null)
     {
+        var show = await repository.GetByIdAsync(id);
+
+        if (show == null)
+            return false;
+
+        if (managerUserId.HasValue &&
+            !await IsScreenAssignedToManagerAsync(
+                show.ScreenId, managerUserId.Value))
+        {
+            throw new UnauthorizedAccessException();
+        }
+
         return await repository.DeleteAsync(id);
     }
 }

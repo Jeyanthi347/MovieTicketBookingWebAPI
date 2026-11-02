@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using MovieTicketBookingWebAPI.Data;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
@@ -25,6 +26,13 @@ public class TheatreRepository : ITheatreRepository
     {
         return await context.Theatres
             .FirstOrDefaultAsync(t => t.TheatreId == id);
+    }
+
+    // Get theatre assigned to a particular manager
+    public async Task<Theatre?> GetByManagerUserIdAsync(int userId)
+    {
+        return await context.Theatres
+            .FirstOrDefaultAsync(t => t.TheatreManagerUserId == userId);
     }
 
     // Add a new theatre

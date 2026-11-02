@@ -1,4 +1,5 @@
-﻿using MovieTicketBookingWebAPI.DTOs.Bookings;
+﻿
+using MovieTicketBookingWebAPI.DTOs.Bookings;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
 using MovieTicketBookingWebAPI.Services.Interfaces;
@@ -8,17 +9,20 @@ namespace MovieTicketBookingWebAPI.Services;
 public class BookingService : IBookingService
 {
     private readonly IBookingRepository repository;
+    private readonly IUserRepository userRepository;
 
-    public BookingService(IBookingRepository repository)
+    public BookingService(
+        IBookingRepository repository,
+        IUserRepository userRepository)
     {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
-    // Get all bookings
-    public async Task<List<BookingResponseDto>> GetAllAsync()
+    public async Task<List<BookingResponseDto>> GetAllAsync(
+        int? userId = null)
     {
-        var bookings = await repository.GetAllAsync();
-
+        var bookings = await repository.GetAllAsync(userId);
         var result = new List<BookingResponseDto>();
 
         foreach (var booking in bookings)
@@ -40,15 +44,16 @@ public class BookingService : IBookingService
         return result;
     }
 
-    // Get booking by ID
-    public async Task<BookingDetailsResponseDto?> GetByIdAsync(int id)
+    public async Task<BookingDetailsResponseDto?> GetByIdAsync(
+        int id, int? userId = null)
     {
         var booking = await repository.GetByIdAsync(id);
 
         if (booking == null)
-        {
             return null;
-        }
+
+        if (userId != null && booking.UserId != userId)
+            return null;
 
         var seats = await repository.GetSeatLabelsAsync(
             booking.BookingId);
@@ -68,11 +73,11 @@ public class BookingService : IBookingService
         };
     }
 
-    // Get bookings for a particular show
     public async Task<List<BookingResponseDto>> GetByShowIdAsync(
-        int showId)
+        int showId, int? userId = null)
     {
-        var bookings = await repository.GetByShowIdAsync(showId);
+        var bookings = await repository.GetByShowIdAsync(
+            showId, userId);
 
         var result = new List<BookingResponseDto>();
 
@@ -95,75 +100,54 @@ public class BookingService : IBookingService
         return result;
     }
 
-    // Create a booking
     public async Task<BookingResponseDto> CreateAsync(
-        CreateBookingDto dto)
+        CreateBookingDto dto, int userId)
     {
-        // Validate customer details
-        if (string.IsNullOrWhiteSpace(dto.CustomerName) ||
-            string.IsNullOrWhiteSpace(dto.CustomerEmail) ||
-            string.IsNullOrWhiteSpace(dto.CustomerPhone))
-        {
-            throw new ArgumentException(
-                "Customer details are required.");
-        }
+        var user = await userRepository.GetByIdAsync(userId);
 
-        // Validate selected seats
+        if (user == null)
+            throw new KeyNotFoundException("User not found.");
+
+        if (string.IsNullOrWhiteSpace(dto.CustomerPhone))
+            throw new ArgumentException("Customer phone is required.");
+
         if (dto.SeatIds == null || dto.SeatIds.Count == 0)
-        {
-            throw new ArgumentException(
-                "Please select at least one seat.");
-        }
+            throw new ArgumentException("Please select at least one seat.");
 
-        // Check duplicate seat IDs
         if (dto.SeatIds.Distinct().Count() != dto.SeatIds.Count)
-        {
-            throw new ArgumentException(
-                "Duplicate seat IDs are not allowed.");
-        }
+            throw new ArgumentException("Duplicate seat IDs are not allowed.");
 
-        // Check whether the show exists
         var show = await repository.GetShowByIdAsync(dto.ShowId);
 
         if (show == null)
-        {
             throw new KeyNotFoundException("Show not found.");
-        }
 
-        // Get selected seats for this show
         var showSeats = await repository.GetShowSeatsByIdsAsync(
             dto.ShowId, dto.SeatIds);
 
-        // Check whether all requested seats belong to this show
         if (showSeats.Count != dto.SeatIds.Count)
-        {
             throw new ArgumentException(
                 "One or more selected seats do not belong to this show.");
-        }
 
-        // Check whether all selected seats are available
         if (showSeats.Any(ss => ss.Status != "Available"))
-        {
             throw new InvalidOperationException(
                 "One or more selected seats are already booked.");
-        }
 
-        // Calculate total amount on the server
-        decimal totalAmount = show.TicketPrice * dto.SeatIds.Count;
+        decimal totalAmount =
+            show.TicketPrice * dto.SeatIds.Count;
 
-        // Create booking object
         var booking = new Booking
         {
+            UserId = user.UserId,
             ShowId = dto.ShowId,
-            CustomerName = dto.CustomerName,
-            CustomerEmail = dto.CustomerEmail,
+            CustomerName = user.FullName,
+            CustomerEmail = user.Email,
             CustomerPhone = dto.CustomerPhone,
             BookingDate = DateTime.UtcNow,
             TotalAmount = totalAmount,
             Status = "Confirmed"
         };
 
-        // Create BookingSeat records
         var bookingSeats = new List<BookingSeat>();
 
         foreach (var showSeat in showSeats)
@@ -175,11 +159,9 @@ public class BookingService : IBookingService
             });
         }
 
-        // Save booking, booking seats and update seat statuses
         var savedBooking = await repository.CreateAsync(
             booking, bookingSeats, showSeats);
 
-        // Get seat labels for the response
         var seatLabels = await repository.GetSeatLabelsAsync(
             savedBooking.BookingId);
 
@@ -194,27 +176,24 @@ public class BookingService : IBookingService
         };
     }
 
-    // Cancel a booking
-    public async Task<bool> CancelAsync(int id)
+    public async Task<bool> CancelAsync(
+        int id, int? userId = null)
     {
         var booking = await repository.GetByIdAsync(id);
 
         if (booking == null)
-        {
             return false;
-        }
+
+        if (userId != null && booking.UserId != userId)
+            return false;
 
         if (booking.Status != "Confirmed")
-        {
             throw new InvalidOperationException(
                 "Only confirmed bookings can be cancelled.");
-        }
 
-        // Find the seats belonging to this booking
-        var showSeats = await repository.GetShowSeatsForBookingAsync(
-            booking);
+        var showSeats =
+            await repository.GetShowSeatsForBookingAsync(booking);
 
-        // Cancel booking and release seats
         await repository.CancelAsync(booking, showSeats);
 
         return true;

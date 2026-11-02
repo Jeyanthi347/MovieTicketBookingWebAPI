@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MovieTicketBookingWebAPI.Data;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
@@ -35,59 +34,50 @@ namespace MovieTicketBookingWebAPI.Repositories
                 .FirstOrDefaultAsync(r => r.RatingId == id);
         }
 
-        // Get movie ratings
+        // Get ratings for a particular movie
         public async Task<List<Rating>> GetMovieRatingsAsync(int movieId)
         {
             return await context.Ratings
                 .Include(r => r.Booking)
                 .Include(r => r.Movie)
+                .Include(r => r.Theatre)
                 .Where(r => r.MovieId == movieId)
                 .ToListAsync();
         }
 
-        // Get theatre ratings
+        // Get ratings for a particular theatre
         public async Task<List<Rating>> GetTheatreRatingsAsync(int theatreId)
         {
             return await context.Ratings
                 .Include(r => r.Booking)
+                .Include(r => r.Movie)
                 .Include(r => r.Theatre)
                 .Where(r => r.TheatreId == theatreId)
                 .ToListAsync();
         }
 
-        // Add rating
+        // Create rating
         public async Task<Rating> CreateAsync(Rating rating)
         {
-            context.Ratings.Add(rating);
+            await context.Ratings.AddAsync(rating);
             await context.SaveChangesAsync();
 
             return rating;
         }
 
         // Update rating
-        public async Task<Rating?> UpdateAsync(int id, Rating rating)
+        public async Task<Rating?> UpdateAsync(Rating rating)
         {
-            var existingRating = await context.Ratings
-                .FirstOrDefaultAsync(r => r.RatingId == id);
-
-            if (existingRating == null)
-            {
-                return null;
-            }
-
-            existingRating.RatingValue = rating.RatingValue;
-            existingRating.Review = rating.Review;
-
+            context.Ratings.Update(rating);
             await context.SaveChangesAsync();
 
-            return await GetByIdAsync(id);
+            return await GetByIdAsync(rating.RatingId);
         }
 
         // Delete rating
         public async Task<bool> DeleteAsync(int id)
         {
-            var rating = await context.Ratings
-                .FirstOrDefaultAsync(r => r.RatingId == id);
+            var rating = await context.Ratings.FindAsync(id);
 
             if (rating == null)
             {
@@ -103,19 +93,19 @@ namespace MovieTicketBookingWebAPI.Repositories
         // Check whether booking is confirmed
         public async Task<bool> IsBookingConfirmedAsync(int bookingId)
         {
-            return await context.Bookings
-                .AnyAsync(b =>
-                    b.BookingId == bookingId &&
-                    b.Status == "Confirmed");
+            return await context.Bookings.AnyAsync(b =>
+                b.BookingId == bookingId &&
+                b.Status == "Confirmed");
         }
 
-        // Check whether movie or theatre belongs to the booking
+        // Validate whether the selected movie or theatre
+        // belongs to the booking
         public async Task<bool> IsValidBookingTargetAsync(
             int bookingId,
             int? movieId,
             int? theatreId)
         {
-            // Validate movie
+            // Movie rating validation
             if (movieId.HasValue)
             {
                 return await (
@@ -128,7 +118,7 @@ namespace MovieTicketBookingWebAPI.Repositories
                 ).AnyAsync();
             }
 
-            // Validate theatre
+            // Theatre rating validation
             if (theatreId.HasValue)
             {
                 return await (
@@ -146,7 +136,7 @@ namespace MovieTicketBookingWebAPI.Repositories
             return false;
         }
 
-        // Check duplicate rating
+        // Check whether a rating already exists
         public async Task<bool> RatingExistsAsync(
             int bookingId,
             int? movieId,
@@ -156,6 +146,16 @@ namespace MovieTicketBookingWebAPI.Repositories
                 r.BookingId == bookingId &&
                 r.MovieId == movieId &&
                 r.TheatreId == theatreId);
+        }
+
+        // Check whether booking belongs to the customer
+        public async Task<bool> IsBookingOwnedByUserAsync(
+            int bookingId,
+            int userId)
+        {
+            return await context.Bookings.AnyAsync(b =>
+                b.BookingId == bookingId &&
+                b.UserId == userId);
         }
     }
 }

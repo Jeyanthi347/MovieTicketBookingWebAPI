@@ -1,10 +1,16 @@
+
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 using MovieTicketBookingWebAPI.Data;
+using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
 using MovieTicketBookingWebAPI.Services;
 using MovieTicketBookingWebAPI.Services.Interfaces;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,50 +28,87 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Add OpenAPI
 builder.Services.AddOpenApi();
-// Repository registration
-builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 
-// Service registration
+// Movie registration
+builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddScoped<IMovieService, MovieService>();
 
-
-// Register TheatreRepository and TheatreService
+// Theatre registration
 builder.Services.AddScoped<ITheatreRepository, TheatreRepository>();
 builder.Services.AddScoped<ITheatreService, TheatreService>();
 
-
-// Register ScreenRepository and ScreenService
+// Screen registration
 builder.Services.AddScoped<IScreenRepository, ScreenRepository>();
-
 builder.Services.AddScoped<IScreenService, ScreenService>();
 
-
-// Register SeatRepository and SeatService
+// Seat registration
 builder.Services.AddScoped<ISeatRepository, SeatRepository>();
 builder.Services.AddScoped<ISeatService, SeatService>();
 
-//Register ShowRepository and ShowService
-
+// Show registration
 builder.Services.AddScoped<IShowRepository, ShowRepository>();
 builder.Services.AddScoped<IShowService, ShowService>();
 
-//Register BookingRepository and BookingService
-
+// Booking registration
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 
-//Register rating
+// Rating registration
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddScoped<IRatingService, RatingService>();
+
+// User authentication registration
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
+
+// Password hashing registration
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
+// JWT configuration
+var jwtKey = builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException("JWT Key is missing.");
+
+var jwtIssuer = builder.Configuration["Jwt:Issuer"]
+    ?? throw new InvalidOperationException("JWT Issuer is missing.");
+
+var jwtAudience = builder.Configuration["Jwt:Audience"]
+    ?? throw new InvalidOperationException("JWT Audience is missing.");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme =
+        JwtBearerDefaults.AuthenticationScheme;
+
+    options.DefaultChallengeScheme =
+        JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(jwtKey)
+        ),
+
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+// Add authorization
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
 // Configure HTTP request pipeline
-//if (app.Environment.IsDevelopment())
-//{
-//    app.MapOpenApi();
-//}
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -74,6 +117,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Authentication must come before Authorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

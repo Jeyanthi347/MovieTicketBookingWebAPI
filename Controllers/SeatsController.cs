@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using MovieTicketBookingWebAPI.DTOs.Seats;
 using MovieTicketBookingWebAPI.Services.Interfaces;
 
@@ -16,19 +19,36 @@ public class SeatsController : ControllerBase
         this.service = service;
     }
 
+    // Get the logged-in TheatreManager's UserId
+    private int? GetManagerUserId()
+    {
+        if (User.IsInRole("TheatreManager"))
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.TryParse(userId, out int id) ? id : null;
+        }
+
+        return null;
+    }
+
     // POST: api/seats
     // Create one seat
     [HttpPost]
+    [Authorize(Roles = "Admin,TheatreManager")]
     public async Task<IActionResult> Create(CreateSeatDto dto)
     {
         try
         {
-            var seat = await service.CreateAsync(dto);
+            var seat = await service.CreateAsync(dto, GetManagerUserId());
 
             return CreatedAtAction(
                 nameof(GetById),
                 new { id = seat.SeatId },
                 seat);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
         }
         catch (DbUpdateException)
         {
@@ -39,13 +59,18 @@ public class SeatsController : ControllerBase
     // POST: api/seats/bulk
     // Create multiple seats
     [HttpPost("bulk")]
+    [Authorize(Roles = "Admin,TheatreManager")]
     public async Task<IActionResult> BulkCreate(BulkCreateSeatsDto dto)
     {
         try
         {
-            var seats = await service.BulkCreateAsync(dto);
+            var seats = await service.BulkCreateAsync(dto, GetManagerUserId());
 
             return StatusCode(201, seats);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
         }
         catch (DbUpdateException)
         {
@@ -79,16 +104,21 @@ public class SeatsController : ControllerBase
     // PUT: api/seats/1
     // Update seat
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin,TheatreManager")]
     public async Task<IActionResult> Update(int id, UpdateSeatDto dto)
     {
         try
         {
-            var seat = await service.UpdateAsync(id, dto);
+            var seat = await service.UpdateAsync(id, dto, GetManagerUserId());
 
             if (seat == null)
                 return NotFound("Seat not found.");
 
             return Ok(seat);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
         }
         catch (DbUpdateException)
         {
@@ -99,16 +129,21 @@ public class SeatsController : ControllerBase
     // DELETE: api/seats/1
     // Delete seat
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin,TheatreManager")]
     public async Task<IActionResult> Delete(int id)
     {
         try
         {
-            var deleted = await service.DeleteAsync(id);
+            var deleted = await service.DeleteAsync(id, GetManagerUserId());
 
             if (!deleted)
                 return NotFound("Seat not found.");
 
             return NoContent();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
         }
         catch (DbUpdateException)
         {

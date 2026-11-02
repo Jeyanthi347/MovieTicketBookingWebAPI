@@ -64,12 +64,17 @@ namespace MovieTicketBookingWebAPI.Migrations
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("BookingId");
 
                     b.HasIndex("BookingReference")
                         .IsUnique();
 
                     b.HasIndex("ShowId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Bookings", t =>
                         {
@@ -341,9 +346,46 @@ namespace MovieTicketBookingWebAPI.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<int?>("TheatreManagerUserId")
+                        .HasColumnType("int");
+
                     b.HasKey("TheatreId");
 
+                    b.HasIndex("TheatreManagerUserId");
+
                     b.ToTable("Theatres");
+                });
+
+            modelBuilder.Entity("MovieTicketBookingWebAPI.Models.User", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("MovieTicketBookingWebAPI.Models.Booking", b =>
@@ -353,6 +395,12 @@ namespace MovieTicketBookingWebAPI.Migrations
                         .HasForeignKey("ShowId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("MovieTicketBookingWebAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MovieTicketBookingWebAPI.Models.BookingSeat", b =>
@@ -441,6 +489,16 @@ namespace MovieTicketBookingWebAPI.Migrations
                         .HasForeignKey("ShowId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MovieTicketBookingWebAPI.Models.Theatre", b =>
+                {
+                    b.HasOne("MovieTicketBookingWebAPI.Models.User", "TheatreManager")
+                        .WithMany()
+                        .HasForeignKey("TheatreManagerUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("TheatreManager");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using MovieTicketBookingWebAPI.Data;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
@@ -18,6 +19,14 @@ public class ScreenRepository : IScreenRepository
     public async Task<List<Screen>> GetAllAsync()
     {
         return await context.Screens.ToListAsync();
+    }
+
+    // Get screens belonging to a particular theatre
+    public async Task<List<Screen>> GetByTheatreIdAsync(int theatreId)
+    {
+        return await context.Screens
+            .Where(s => s.TheatreId == theatreId)
+            .ToListAsync();
     }
 
     // Get screen by ID

@@ -1,5 +1,37 @@
 [
   {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/Auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Auth.LoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.AuthController",
+    "Method": "Register",
+    "RelativePath": "api/Auth/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Auth.RegisterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "MovieTicketBookingWebAPI.Controllers.BookingsController",
     "Method": "GetAll",
     "RelativePath": "api/Bookings",
@@ -274,7 +306,7 @@
   {
     "ContainingType": "MovieTicketBookingWebAPI.Controllers.RatingsController",
     "Method": "GetMovieRatings",
-    "RelativePath": "api/Ratings/movies/{movieId}",
+    "RelativePath": "api/Ratings/movie/{movieId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -290,7 +322,7 @@
   {
     "ContainingType": "MovieTicketBookingWebAPI.Controllers.RatingsController",
     "Method": "GetTheatreRatings",
-    "RelativePath": "api/Ratings/theatres/{theatreId}",
+    "RelativePath": "api/Ratings/theatre/{theatreId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

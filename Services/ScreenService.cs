@@ -1,4 +1,5 @@
-﻿using MovieTicketBookingWebAPI.DTOs.Screens;
+﻿
+using MovieTicketBookingWebAPI.DTOs.Screens;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
 using MovieTicketBookingWebAPI.Services.Interfaces;
@@ -8,10 +9,14 @@ namespace MovieTicketBookingWebAPI.Services;
 public class ScreenService : IScreenService
 {
     private readonly IScreenRepository repository;
+    private readonly ITheatreRepository theatreRepository;
 
-    public ScreenService(IScreenRepository repository)
+    public ScreenService(
+        IScreenRepository repository,
+        ITheatreRepository theatreRepository)
     {
         this.repository = repository;
+        this.theatreRepository = theatreRepository;
     }
 
     // Get all screens
@@ -46,8 +51,24 @@ public class ScreenService : IScreenService
     }
 
     // Create a new screen
-    public async Task<ScreenResponseDto> CreateAsync(CreateScreenDto dto)
+    public async Task<ScreenResponseDto> CreateAsync(
+        CreateScreenDto dto,
+        int? managerUserId = null)
     {
+        // Check theatre ownership for TheatreManager
+        if (managerUserId.HasValue)
+        {
+            var assignedTheatre =
+                await theatreRepository.GetByManagerUserIdAsync(managerUserId.Value);
+
+            if (assignedTheatre == null ||
+                assignedTheatre.TheatreId != dto.TheatreId)
+            {
+                throw new UnauthorizedAccessException(
+                    "You are not assigned to this theatre.");
+            }
+        }
+
         var screen = new Screen
         {
             TheatreId = dto.TheatreId,
@@ -65,13 +86,31 @@ public class ScreenService : IScreenService
     }
 
     // Update an existing screen
-    public async Task<ScreenResponseDto?> UpdateAsync(int id, UpdateScreenDto dto)
+    public async Task<ScreenResponseDto?> UpdateAsync(
+        int id,
+        UpdateScreenDto dto,
+        int? managerUserId = null)
     {
         var screen = await repository.GetByIdAsync(id);
 
         if (screen == null)
         {
             return null;
+        }
+
+        // Check theatre ownership for TheatreManager
+        if (managerUserId.HasValue)
+        {
+            var assignedTheatre =
+                await theatreRepository.GetByManagerUserIdAsync(managerUserId.Value);
+
+            if (assignedTheatre == null ||
+                screen.TheatreId != assignedTheatre.TheatreId ||
+                dto.TheatreId != assignedTheatre.TheatreId)
+            {
+                throw new UnauthorizedAccessException(
+                    "You are not allowed to update screens outside your assigned theatre.");
+            }
         }
 
         screen.TheatreId = dto.TheatreId;
@@ -88,8 +127,30 @@ public class ScreenService : IScreenService
     }
 
     // Delete a screen
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(
+        int id,
+        int? managerUserId = null)
     {
+        if (managerUserId.HasValue)
+        {
+            var screen = await repository.GetByIdAsync(id);
+
+            if (screen == null)
+            {
+                return false;
+            }
+
+            var assignedTheatre =
+                await theatreRepository.GetByManagerUserIdAsync(managerUserId.Value);
+
+            if (assignedTheatre == null ||
+                screen.TheatreId != assignedTheatre.TheatreId)
+            {
+                throw new UnauthorizedAccessException(
+                    "You are not allowed to delete screens outside your assigned theatre.");
+            }
+        }
+
         return await repository.DeleteAsync(id);
     }
 }

@@ -38,6 +38,9 @@ public class ApplicationDbContext : DbContext
     // Rating table
     public DbSet<Rating> Ratings { get; set; }
 
+    // User table
+    public DbSet<User> Users { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -79,6 +82,12 @@ public class ApplicationDbContext : DbContext
             entity.Property(t => t.Location)
                   .IsRequired()
                   .HasMaxLength(200);
+
+            // TheatreManager relationship
+            entity.HasOne(t => t.TheatreManager)
+                  .WithMany()
+                  .HasForeignKey(t => t.TheatreManagerUserId)
+                  .OnDelete(DeleteBehavior.NoAction);
         });
 
         // Screen table configuration

@@ -1,5 +1,4 @@
-﻿
-using MovieTicketBookingWebAPI.DTOs.Ratings;
+﻿using MovieTicketBookingWebAPI.DTOs.Ratings;
 
 namespace MovieTicketBookingWebAPI.Services.Interfaces
 {
@@ -13,10 +12,12 @@ namespace MovieTicketBookingWebAPI.Services.Interfaces
 
         Task<List<RatingResponseDto>> GetTheatreRatingsAsync(int theatreId);
 
-        Task<RatingResponseDto?> CreateAsync(CreateRatingDto dto);
+        Task<RatingResponseDto?> CreateAsync(
+            CreateRatingDto dto, int? userId, bool isAdmin);
 
-        Task<RatingResponseDto?> UpdateAsync(int id, UpdateRatingDto dto);
+        Task<RatingResponseDto?> UpdateAsync(
+            int id, UpdateRatingDto dto, int? userId);
 
-        Task<bool> DeleteAsync(int id);
+        Task<bool> DeleteAsync(int id, int? userId);
     }
 }

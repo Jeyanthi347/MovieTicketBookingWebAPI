@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using MovieTicketBookingWebAPI.DTOs.Shows;
 using MovieTicketBookingWebAPI.Services.Interfaces;
 
@@ -16,19 +19,36 @@ public class ShowsController : ControllerBase
         this.service = service;
     }
 
+    // Get the logged-in TheatreManager's UserId
+    private int? GetManagerUserId()
+    {
+        if (User.IsInRole("TheatreManager"))
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.TryParse(userId, out int id) ? id : null;
+        }
+
+        return null;
+    }
+
     // POST: api/shows
     // Create a new show and automatically generate ShowSeats
+    [Authorize(Roles = "Admin,TheatreManager")]
     [HttpPost]
     public async Task<IActionResult> Create(CreateShowDto dto)
     {
         try
         {
-            var show = await service.CreateAsync(dto);
+            var show = await service.CreateAsync(dto, GetManagerUserId());
 
             return CreatedAtAction(
                 nameof(GetById),
                 new { id = show.ShowId },
                 show);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
         }
         catch (ArgumentException ex)
         {
@@ -82,17 +102,22 @@ public class ShowsController : ControllerBase
 
     // PUT: api/shows/1
     // Update show
+    [Authorize(Roles = "Admin,TheatreManager")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, UpdateShowDto dto)
     {
         try
         {
-            var show = await service.UpdateAsync(id, dto);
+            var show = await service.UpdateAsync(id, dto, GetManagerUserId());
 
             if (show == null)
                 return NotFound("Show not found.");
 
             return Ok(show);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
         }
         catch (ArgumentException ex)
         {
@@ -106,17 +131,22 @@ public class ShowsController : ControllerBase
 
     // DELETE: api/shows/1
     // Delete show
+    [Authorize(Roles = "Admin,TheatreManager")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
         try
         {
-            var deleted = await service.DeleteAsync(id);
+            var deleted = await service.DeleteAsync(id, GetManagerUserId());
 
             if (!deleted)
                 return NotFound("Show not found.");
 
             return NoContent();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
         }
         catch (DbUpdateException)
         {

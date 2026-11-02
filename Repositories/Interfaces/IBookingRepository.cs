@@ -9,20 +9,26 @@ public interface IBookingRepository
     Task<List<ShowSeat>> GetShowSeatsByIdsAsync(
         int showId, List<int> seatIds);
 
-    Task<List<Booking>> GetAllAsync();
+    Task<List<Booking>> GetAllAsync(
+        int? userId = null);
 
     Task<Booking?> GetByIdAsync(int id);
 
-    Task<List<Booking>> GetByShowIdAsync(int showId);
+    Task<List<Booking>> GetByShowIdAsync(
+        int showId,
+        int? userId = null);
 
     Task<List<string>> GetSeatLabelsAsync(int bookingId);
 
-    Task<List<ShowSeat>> GetShowSeatsForBookingAsync(Booking booking);
+    Task<List<ShowSeat>> GetShowSeatsForBookingAsync(
+        Booking booking);
 
     Task<Booking> CreateAsync(
         Booking booking,
         List<BookingSeat> bookingSeats,
         List<ShowSeat> showSeats);
 
-    Task CancelAsync(Booking booking, List<ShowSeat> showSeats);
+    Task CancelAsync(
+        Booking booking,
+        List<ShowSeat> showSeats);
 }

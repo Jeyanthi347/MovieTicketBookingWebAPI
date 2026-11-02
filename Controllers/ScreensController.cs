@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using MovieTicketBookingWebAPI.DTOs.Screens;
 using MovieTicketBookingWebAPI.Services.Interfaces;
 
@@ -16,16 +19,37 @@ public class ScreensController : ControllerBase
         this.service = service;
     }
 
+    // Get the logged-in TheatreManager's UserId
+    private int? GetManagerUserId()
+    {
+        if (User.IsInRole("TheatreManager"))
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            return int.TryParse(userId, out int id) ? id : null;
+        }
+
+        return null;
+    }
+
     // POST: api/screens
+    [Authorize(Roles = "Admin,TheatreManager")]
     [HttpPost]
     public async Task<IActionResult> CreateScreen(CreateScreenDto dto)
     {
-        var screen = await service.CreateAsync(dto);
+        try
+        {
+            var screen = await service.CreateAsync(dto, GetManagerUserId());
 
-        return CreatedAtAction(
-            nameof(GetScreenById),
-            new { id = screen.ScreenId },
-            screen);
+            return CreatedAtAction(
+                nameof(GetScreenById),
+                new { id = screen.ScreenId },
+                screen);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid();
+        }
     }
 
     // GET: api/screens
@@ -52,26 +76,35 @@ public class ScreensController : ControllerBase
     }
 
     // PUT: api/screens/1
+    [Authorize(Roles = "Admin,TheatreManager")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateScreen(int id, UpdateScreenDto dto)
     {
-        var screen = await service.UpdateAsync(id, dto);
-
-        if (screen == null)
+        try
         {
-            return NotFound("Screen not found.");
-        }
+            var screen = await service.UpdateAsync(id, dto, GetManagerUserId());
 
-        return Ok(screen);
+            if (screen == null)
+            {
+                return NotFound("Screen not found.");
+            }
+
+            return Ok(screen);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
     }
 
     // DELETE: api/screens/1
+    [Authorize(Roles = "Admin,TheatreManager")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteScreen(int id)
     {
         try
         {
-            var result = await service.DeleteAsync(id);
+            var result = await service.DeleteAsync(id, GetManagerUserId());
 
             if (!result)
             {
@@ -79,6 +112,10 @@ public class ScreensController : ControllerBase
             }
 
             return NoContent();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
         }
         catch (DbUpdateException)
         {

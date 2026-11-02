@@ -32,10 +32,12 @@ public class BookingRepository : IBookingRepository
             .ToListAsync();
     }
 
-    // Get all bookings
-    public async Task<List<Booking>> GetAllAsync()
+    // Get all bookings or bookings belonging to a particular user
+    public async Task<List<Booking>> GetAllAsync(int? userId = null)
     {
-        return await context.Bookings.ToListAsync();
+        return await context.Bookings
+            .Where(b => userId == null || b.UserId == userId)
+            .ToListAsync();
     }
 
     // Get booking by ID
@@ -45,11 +47,13 @@ public class BookingRepository : IBookingRepository
             .FirstOrDefaultAsync(b => b.BookingId == id);
     }
 
-    // Get bookings for a particular show
-    public async Task<List<Booking>> GetByShowIdAsync(int showId)
+    // Get bookings for a particular show and optionally a particular user
+    public async Task<List<Booking>> GetByShowIdAsync(
+        int showId, int? userId = null)
     {
         return await context.Bookings
-            .Where(b => b.ShowId == showId)
+            .Where(b => b.ShowId == showId &&
+                        (userId == null || b.UserId == userId))
             .ToListAsync();
     }
 

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MovieTicketBookingWebAPI.DTOs.Theatres;
 using MovieTicketBookingWebAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MovieTicketBookingWebAPI.Controllers;
 
@@ -17,6 +18,7 @@ public class TheatresController : ControllerBase
     }
 
     // POST: api/theatres
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> CreateTheatre(CreateTheatreDto dto)
     {
@@ -53,6 +55,7 @@ public class TheatresController : ControllerBase
     }
 
     // PUT: api/theatres/1
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateTheatre(
         int id,
@@ -69,6 +72,7 @@ public class TheatresController : ControllerBase
     }
 
     // DELETE: api/theatres/1
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteTheatre(int id)
     {
