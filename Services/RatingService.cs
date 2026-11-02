@@ -1,4 +1,5 @@
-﻿using MovieTicketBookingWebAPI.DTOs.Ratings;
+﻿
+using MovieTicketBookingWebAPI.DTOs.Ratings;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
 using MovieTicketBookingWebAPI.Services.Interfaces;
@@ -119,8 +120,8 @@ namespace MovieTicketBookingWebAPI.Services
             if (rating == null)
                 return null;
 
-            // If userId is provided, the caller is a Customer.
             // Admin passes null and can update any rating.
+            // Customers can update only their own ratings.
             if (userId.HasValue &&
                 rating.Booking.UserId != userId.Value)
             {
@@ -145,8 +146,8 @@ namespace MovieTicketBookingWebAPI.Services
             if (rating == null)
                 return false;
 
-            // Customers can delete only their own ratings.
             // Admin passes null and can delete any rating.
+            // Customers can delete only their own ratings.
             if (userId.HasValue &&
                 rating.Booking.UserId != userId.Value)
             {
@@ -165,7 +166,7 @@ namespace MovieTicketBookingWebAPI.Services
                 BookingId = rating.BookingId,
                 CustomerName = rating.Booking.CustomerName,
                 MovieName = rating.Movie?.MovieName,
-                TheatreName = rating.Theatre?.TheatreName,
+                TheatreName = rating.Theatre?.Name,
                 RatingValue = rating.RatingValue,
                 Review = rating.Review
             };
