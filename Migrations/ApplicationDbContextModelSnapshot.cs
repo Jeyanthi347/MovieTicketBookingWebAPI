@@ -152,6 +152,53 @@ namespace MovieTicketBookingWebAPI.Migrations
                     b.ToTable("Movies");
                 });
 
+            modelBuilder.Entity("MovieTicketBookingWebAPI.Models.Rating", b =>
+                {
+                    b.Property<int>("RatingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RatingId"));
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("RatingValue")
+                        .HasPrecision(3, 1)
+                        .HasColumnType("decimal(3,1)");
+
+                    b.Property<string>("Review")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("TheatreId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RatingId");
+
+                    b.HasIndex("MovieId");
+
+                    b.HasIndex("TheatreId");
+
+                    b.HasIndex("BookingId", "MovieId")
+                        .IsUnique()
+                        .HasFilter("[MovieId] IS NOT NULL");
+
+                    b.HasIndex("BookingId", "TheatreId")
+                        .IsUnique()
+                        .HasFilter("[TheatreId] IS NOT NULL");
+
+                    b.ToTable("Ratings", t =>
+                        {
+                            t.HasCheckConstraint("CK_Ratings_OneTarget", "([MovieId] IS NOT NULL AND [TheatreId] IS NULL) OR ([MovieId] IS NULL AND [TheatreId] IS NOT NULL)");
+
+                            t.HasCheckConstraint("CK_Ratings_RatingValue", "[RatingValue] >= 1 AND [RatingValue] <= 10");
+                        });
+                });
+
             modelBuilder.Entity("MovieTicketBookingWebAPI.Models.Screen", b =>
                 {
                     b.Property<int>("ScreenId")
@@ -321,6 +368,31 @@ namespace MovieTicketBookingWebAPI.Migrations
                         .HasForeignKey("SeatId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MovieTicketBookingWebAPI.Models.Rating", b =>
+                {
+                    b.HasOne("MovieTicketBookingWebAPI.Models.Booking", "Booking")
+                        .WithMany()
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("MovieTicketBookingWebAPI.Models.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("MovieTicketBookingWebAPI.Models.Theatre", "Theatre")
+                        .WithMany()
+                        .HasForeignKey("TheatreId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("Movie");
+
+                    b.Navigation("Theatre");
                 });
 
             modelBuilder.Entity("MovieTicketBookingWebAPI.Models.Screen", b =>

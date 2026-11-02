@@ -19,7 +19,7 @@
     "Parameters": [
       {
         "Name": "dto",
-        "Type": "MovieTicketBookingWebAPI.DTOs.CreateBookingDto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Bookings.CreateBookingDto",
         "IsRequired": true
       }
     ],
@@ -83,7 +83,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[MovieTicketBookingWebAPI.DTOs.MovieResponseDto, MovieTicketBookingWebAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.List\u00601[[MovieTicketBookingWebAPI.DTOs.Movies.MovieResponseDto, MovieTicketBookingWebAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -103,13 +103,13 @@
     "Parameters": [
       {
         "Name": "dto",
-        "Type": "MovieTicketBookingWebAPI.DTOs.CreateMovieDto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Movies.CreateMovieDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MovieTicketBookingWebAPI.DTOs.MovieResponseDto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Movies.MovieResponseDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -135,7 +135,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "MovieTicketBookingWebAPI.DTOs.MovieResponseDto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Movies.MovieResponseDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -160,13 +160,13 @@
       },
       {
         "Name": "dto",
-        "Type": "MovieTicketBookingWebAPI.DTOs.UpdateMovieDto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Movies.UpdateMovieDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MovieTicketBookingWebAPI.DTOs.MovieResponseDto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Movies.MovieResponseDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -193,6 +193,117 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.RatingsController",
+    "Method": "GetAll",
+    "RelativePath": "api/Ratings",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.RatingsController",
+    "Method": "Create",
+    "RelativePath": "api/Ratings",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Ratings.CreateRatingDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.RatingsController",
+    "Method": "GetById",
+    "RelativePath": "api/Ratings/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.RatingsController",
+    "Method": "Update",
+    "RelativePath": "api/Ratings/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Ratings.UpdateRatingDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.RatingsController",
+    "Method": "Delete",
+    "RelativePath": "api/Ratings/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.RatingsController",
+    "Method": "GetMovieRatings",
+    "RelativePath": "api/Ratings/movies/{movieId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "movieId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MovieTicketBookingWebAPI.Controllers.RatingsController",
+    "Method": "GetTheatreRatings",
+    "RelativePath": "api/Ratings/theatres/{theatreId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "theatreId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "MovieTicketBookingWebAPI.Controllers.ScreensController",
     "Method": "CreateScreen",
     "RelativePath": "api/Screens",
@@ -202,7 +313,7 @@
     "Parameters": [
       {
         "Name": "dto",
-        "Type": "MovieTicketBookingWebAPI.DTOs.CreateScreenDto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Screens.CreateScreenDto",
         "IsRequired": true
       }
     ],
@@ -249,7 +360,7 @@
       },
       {
         "Name": "dto",
-        "Type": "MovieTicketBookingWebAPI.DTOs.UpdateScreenDto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Screens.UpdateScreenDto",
         "IsRequired": true
       }
     ],
@@ -281,7 +392,7 @@
     "Parameters": [
       {
         "Name": "dto",
-        "Type": "MovieTicketBookingWebAPI.DTOs.CreateSeatDto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Seats.CreateSeatDto",
         "IsRequired": true
       }
     ],
@@ -318,7 +429,7 @@
       },
       {
         "Name": "dto",
-        "Type": "MovieTicketBookingWebAPI.DTOs.UpdateSeatDto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Seats.UpdateSeatDto",
         "IsRequired": true
       }
     ],
@@ -350,7 +461,7 @@
     "Parameters": [
       {
         "Name": "dto",
-        "Type": "MovieTicketBookingWebAPI.DTOs.BulkCreateSeatsDto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Seats.BulkCreateSeatsDto",
         "IsRequired": true
       }
     ],
@@ -382,7 +493,7 @@
     "Parameters": [
       {
         "Name": "dto",
-        "Type": "MovieTicketBookingWebAPI.DTOs.CreateShowDto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Shows.CreateShowDto",
         "IsRequired": true
       }
     ],
@@ -429,7 +540,7 @@
       },
       {
         "Name": "dto",
-        "Type": "MovieTicketBookingWebAPI.DTOs.UpdateShowDto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Shows.UpdateShowDto",
         "IsRequired": true
       }
     ],
@@ -477,7 +588,7 @@
     "Parameters": [
       {
         "Name": "dto",
-        "Type": "MovieTicketBookingWebAPI.DTOs.CreateTheatreDto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Theatres.CreateTheatreDto",
         "IsRequired": true
       }
     ],
@@ -524,7 +635,7 @@
       },
       {
         "Name": "dto",
-        "Type": "MovieTicketBookingWebAPI.DTOs.UpdateTheatreDto",
+        "Type": "MovieTicketBookingWebAPI.DTOs.Theatres.UpdateTheatreDto",
         "IsRequired": true
       }
     ],

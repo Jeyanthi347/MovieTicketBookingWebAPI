@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using MovieTicketBookingWebAPI.Models;
-
 
 namespace MovieTicketBookingWebAPI.Data;
 
@@ -23,20 +23,20 @@ public class ApplicationDbContext : DbContext
     // Seat table
     public DbSet<Seat> Seats { get; set; }
 
-    //show table
+    // Show table
     public DbSet<Show> Shows { get; set; }
 
-
     // ShowSeat table
-
     public DbSet<ShowSeat> ShowSeats { get; set; }
 
     // Booking table
     public DbSet<Booking> Bookings { get; set; }
 
-
     // BookingSeat table
     public DbSet<BookingSeat> BookingSeats { get; set; }
+
+    // Rating table
+    public DbSet<Rating> Ratings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -95,8 +95,6 @@ public class ApplicationDbContext : DbContext
                   .HasForeignKey(s => s.TheatreId);
         });
 
-
-
         // Seat table configuration
         modelBuilder.Entity<Seat>(entity =>
         {
@@ -131,7 +129,6 @@ public class ApplicationDbContext : DbContext
         });
 
         // Show table configuration
-
         modelBuilder.Entity<Show>(entity =>
         {
             entity.HasKey(s => s.ShowId);
@@ -166,7 +163,7 @@ public class ApplicationDbContext : DbContext
             });
         });
 
-
+        // ShowSeat table configuration
         modelBuilder.Entity<ShowSeat>(entity =>
         {
             entity.HasKey(ss => ss.ShowSeatId);
@@ -188,7 +185,6 @@ public class ApplicationDbContext : DbContext
             entity.HasIndex(ss => new { ss.ShowId, ss.SeatId })
                   .IsUnique();
         });
-
 
         // Booking table configuration
         modelBuilder.Entity<Booking>(entity =>
@@ -262,6 +258,61 @@ public class ApplicationDbContext : DbContext
                 t.HasCheckConstraint(
                     "CK_BookingSeats_Price",
                     "[Price] >= 0");
+            });
+        });
+
+        // Rating table configuration
+        modelBuilder.Entity<Rating>(entity =>
+        {
+            entity.HasKey(r => r.RatingId);
+
+            entity.Property(r => r.RatingValue)
+                  .HasPrecision(3, 1)
+                  .IsRequired();
+
+            entity.Property(r => r.Review)
+                  .HasMaxLength(1000);
+
+            // Rating must belong to a booking
+            entity.HasOne(r => r.Booking)
+                  .WithMany()
+                  .HasForeignKey(r => r.BookingId)
+                  .OnDelete(DeleteBehavior.NoAction);
+
+            // Movie rating relationship
+            entity.HasOne(r => r.Movie)
+                  .WithMany()
+                  .HasForeignKey(r => r.MovieId)
+                  .OnDelete(DeleteBehavior.NoAction);
+
+            // Theatre rating relationship
+            entity.HasOne(r => r.Theatre)
+                  .WithMany()
+                  .HasForeignKey(r => r.TheatreId)
+                  .OnDelete(DeleteBehavior.NoAction);
+
+            // Prevent duplicate movie ratings for the same booking
+            entity.HasIndex(r => new { r.BookingId, r.MovieId })
+                  .IsUnique()
+                  .HasFilter("[MovieId] IS NOT NULL");
+
+            // Prevent duplicate theatre ratings for the same booking
+            entity.HasIndex(r => new { r.BookingId, r.TheatreId })
+                  .IsUnique()
+                  .HasFilter("[TheatreId] IS NOT NULL");
+
+            entity.ToTable(t =>
+            {
+                // Exactly one target must be selected
+                t.HasCheckConstraint(
+                    "CK_Ratings_OneTarget",
+                    "([MovieId] IS NOT NULL AND [TheatreId] IS NULL) OR " +
+                    "([MovieId] IS NULL AND [TheatreId] IS NOT NULL)");
+
+                // Rating must be between 1 and 10
+                t.HasCheckConstraint(
+                    "CK_Ratings_RatingValue",
+                    "[RatingValue] >= 1 AND [RatingValue] <= 10");
             });
         });
     }

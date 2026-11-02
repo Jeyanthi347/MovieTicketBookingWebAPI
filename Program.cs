@@ -52,6 +52,10 @@ builder.Services.AddScoped<IShowService, ShowService>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 
+//Register rating
+builder.Services.AddScoped<IRatingRepository, RatingRepository>();
+builder.Services.AddScoped<IRatingService, RatingService>();
+
 var app = builder.Build();
 
 // Configure HTTP request pipeline
