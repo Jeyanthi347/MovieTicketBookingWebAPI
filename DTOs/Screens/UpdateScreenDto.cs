@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MovieTicketBookingWebAPI.DTOs;
+namespace MovieTicketBookingWebAPI.DTOs.Screens;
 
-public class CreateScreenDto
+public class UpdateScreenDto
 {
     [Required]
     public int TheatreId { get; set; }

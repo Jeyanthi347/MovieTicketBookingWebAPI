@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieTicketBookingWebAPI.Data;
-using MovieTicketBookingWebAPI.DTOs;
+using MovieTicketBookingWebAPI.DTOs.Shows;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
 

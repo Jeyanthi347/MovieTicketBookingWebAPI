@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MovieTicketBookingWebAPI.DTOs;
+namespace MovieTicketBookingWebAPI.DTOs.Theatres;
 
 public class CreateTheatreDto
 {

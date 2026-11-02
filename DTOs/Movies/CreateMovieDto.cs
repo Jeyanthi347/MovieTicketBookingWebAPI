@@ -1,7 +1,6 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace MovieTicketBookingWebAPI.DTOs;
+namespace MovieTicketBookingWebAPI.DTOs.Movies;
 
 public class CreateMovieDto
 {

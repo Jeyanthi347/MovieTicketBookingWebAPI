@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using MovieTicketBookingWebAPI.DTOs;
+using MovieTicketBookingWebAPI.DTOs.Movies;
 using MovieTicketBookingWebAPI.Services.Interfaces;
 
 namespace MovieTicketBookingWebAPI.Controllers;

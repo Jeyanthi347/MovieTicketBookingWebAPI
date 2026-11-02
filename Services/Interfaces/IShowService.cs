@@ -1,4 +1,5 @@
 ﻿using MovieTicketBookingWebAPI.DTOs;
+using MovieTicketBookingWebAPI.DTOs.Shows;
 
 namespace MovieTicketBookingWebAPI.Services.Interfaces;
 

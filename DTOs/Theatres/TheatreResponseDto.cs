@@ -1,4 +1,4 @@
-﻿namespace MovieTicketBookingWebAPI.DTOs;
+﻿namespace MovieTicketBookingWebAPI.DTOs.Theatres;
 
 public class TheatreResponseDto
 {

@@ -1,18 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MovieTicketBookingWebAPI.DTOs;
+namespace MovieTicketBookingWebAPI.DTOs.Seats;
 
-public class BulkCreateSeatsDto
+public class CreateSeatDto
 {
     [Required]
     public int ScreenId { get; set; }
 
-    [Required]
-    public List<CreateSeatItemDto> Seats { get; set; } = new();
-}
-
-public class CreateSeatItemDto
-{
     [Required]
     [MaxLength(5)]
     public string RowName { get; set; } = string.Empty;
