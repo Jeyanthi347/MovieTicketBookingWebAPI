@@ -1,4 +1,5 @@
 ﻿
+using MovieTicketBookingWebAPI.DTOs.Common;
 using MovieTicketBookingWebAPI.DTOs.Bookings;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
@@ -19,18 +20,25 @@ public class BookingService : IBookingService
         this.userRepository = userRepository;
     }
 
-    public async Task<List<BookingResponseDto>> GetAllAsync(
+    // Get paginated bookings
+    public async Task<PaginationResponseDto<BookingResponseDto>> GetAllAsync(
+        int pageNumber,
+        int pageSize,
         int? userId = null)
     {
-        var bookings = await repository.GetAllAsync(userId);
-        var result = new List<BookingResponseDto>();
+        var result = await repository.GetAllAsync(
+            pageNumber,
+            pageSize,
+            userId);
 
-        foreach (var booking in bookings)
+        var bookings = new List<BookingResponseDto>();
+
+        foreach (var booking in result.Bookings)
         {
             var seats = await repository.GetSeatLabelsAsync(
                 booking.BookingId);
 
-            result.Add(new BookingResponseDto
+            bookings.Add(new BookingResponseDto
             {
                 BookingId = booking.BookingId,
                 BookingReference = booking.BookingReference,
@@ -41,11 +49,21 @@ public class BookingService : IBookingService
             });
         }
 
-        return result;
+        return new PaginationResponseDto<BookingResponseDto>
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = result.TotalRecords,
+            TotalPages = (int)Math.Ceiling(
+                result.TotalRecords / (double)pageSize),
+            Data = bookings
+        };
     }
 
+    // Get booking by ID
     public async Task<BookingDetailsResponseDto?> GetByIdAsync(
-        int id, int? userId = null)
+        int id,
+        int? userId = null)
     {
         var booking = await repository.GetByIdAsync(id);
 
@@ -73,20 +91,27 @@ public class BookingService : IBookingService
         };
     }
 
-    public async Task<List<BookingResponseDto>> GetByShowIdAsync(
-        int showId, int? userId = null)
+    // Get paginated bookings for a particular show
+    public async Task<PaginationResponseDto<BookingResponseDto>> GetByShowIdAsync(
+        int showId,
+        int pageNumber,
+        int pageSize,
+        int? userId = null)
     {
-        var bookings = await repository.GetByShowIdAsync(
-            showId, userId);
+        var result = await repository.GetByShowIdAsync(
+            showId,
+            pageNumber,
+            pageSize,
+            userId);
 
-        var result = new List<BookingResponseDto>();
+        var bookings = new List<BookingResponseDto>();
 
-        foreach (var booking in bookings)
+        foreach (var booking in result.Bookings)
         {
             var seats = await repository.GetSeatLabelsAsync(
                 booking.BookingId);
 
-            result.Add(new BookingResponseDto
+            bookings.Add(new BookingResponseDto
             {
                 BookingId = booking.BookingId,
                 BookingReference = booking.BookingReference,
@@ -97,11 +122,21 @@ public class BookingService : IBookingService
             });
         }
 
-        return result;
+        return new PaginationResponseDto<BookingResponseDto>
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = result.TotalRecords,
+            TotalPages = (int)Math.Ceiling(
+                result.TotalRecords / (double)pageSize),
+            Data = bookings
+        };
     }
 
+    // Create booking
     public async Task<BookingResponseDto> CreateAsync(
-        CreateBookingDto dto, int userId)
+        CreateBookingDto dto,
+        int userId)
     {
         var user = await userRepository.GetByIdAsync(userId);
 
@@ -123,7 +158,8 @@ public class BookingService : IBookingService
             throw new KeyNotFoundException("Show not found.");
 
         var showSeats = await repository.GetShowSeatsByIdsAsync(
-            dto.ShowId, dto.SeatIds);
+            dto.ShowId,
+            dto.SeatIds);
 
         if (showSeats.Count != dto.SeatIds.Count)
             throw new ArgumentException(
@@ -160,7 +196,9 @@ public class BookingService : IBookingService
         }
 
         var savedBooking = await repository.CreateAsync(
-            booking, bookingSeats, showSeats);
+            booking,
+            bookingSeats,
+            showSeats);
 
         var seatLabels = await repository.GetSeatLabelsAsync(
             savedBooking.BookingId);
@@ -176,8 +214,10 @@ public class BookingService : IBookingService
         };
     }
 
+    // Cancel booking
     public async Task<bool> CancelAsync(
-        int id, int? userId = null)
+        int id,
+        int? userId = null)
     {
         var booking = await repository.GetByIdAsync(id);
 

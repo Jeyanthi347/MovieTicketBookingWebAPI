@@ -1,16 +1,26 @@
-﻿using MovieTicketBookingWebAPI.DTOs.Ratings;
+﻿
+using MovieTicketBookingWebAPI.DTOs.Common;
+using MovieTicketBookingWebAPI.DTOs.Ratings;
 
 namespace MovieTicketBookingWebAPI.Services.Interfaces
 {
     public interface IRatingService
     {
-        Task<List<RatingResponseDto>> GetAllAsync();
+        Task<PaginationResponseDto<RatingResponseDto>> GetAllAsync(
+            int pageNumber,
+            int pageSize);
 
         Task<RatingResponseDto?> GetByIdAsync(int id);
 
-        Task<List<RatingResponseDto>> GetMovieRatingsAsync(int movieId);
+        Task<PaginationResponseDto<RatingResponseDto>> GetMovieRatingsAsync(
+            int movieId,
+            int pageNumber,
+            int pageSize);
 
-        Task<List<RatingResponseDto>> GetTheatreRatingsAsync(int theatreId);
+        Task<PaginationResponseDto<RatingResponseDto>> GetTheatreRatingsAsync(
+            int theatreId,
+            int pageNumber,
+            int pageSize);
 
         Task<RatingResponseDto?> CreateAsync(
             CreateRatingDto dto, int? userId, bool isAdmin);

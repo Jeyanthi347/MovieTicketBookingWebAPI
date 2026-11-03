@@ -1,12 +1,16 @@
 ﻿
+using MovieTicketBookingWebAPI.DTOs.Common;
 using MovieTicketBookingWebAPI.DTOs.Seats;
 
 namespace MovieTicketBookingWebAPI.Services.Interfaces;
 
 public interface ISeatService
 {
-    // Get all seats belonging to a particular screen
-    Task<List<SeatResponseDto>> GetByScreenIdAsync(int screenId);
+    // Get paginated seats belonging to a screen
+    Task<PaginationResponseDto<SeatResponseDto>> GetByScreenIdAsync(
+        int screenId,
+        int pageNumber,
+        int pageSize);
 
     // Get a seat by ID
     Task<SeatResponseDto?> GetByIdAsync(int id);

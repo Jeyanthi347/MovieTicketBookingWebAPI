@@ -1,11 +1,12 @@
-﻿
-using MovieTicketBookingWebAPI.Models;
+﻿using MovieTicketBookingWebAPI.Models;
 
 namespace MovieTicketBookingWebAPI.Repositories.Interfaces;
 
 public interface IMovieRepository
 {
-    Task<List<Movie>> GetAllAsync();
+    Task<(List<Movie> Movies, int TotalRecords)> GetAllAsync(
+        int pageNumber,
+        int pageSize);
 
     Task<Movie?> GetByIdAsync(int id);
 

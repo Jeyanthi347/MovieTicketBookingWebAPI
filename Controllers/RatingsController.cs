@@ -1,6 +1,8 @@
-﻿using System.Security.Claims;
+﻿
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MovieTicketBookingWebAPI.DTOs.Common;
 using MovieTicketBookingWebAPI.DTOs.Ratings;
 using MovieTicketBookingWebAPI.Services.Interfaces;
 
@@ -17,11 +19,33 @@ namespace MovieTicketBookingWebAPI.Controllers
             this.ratingService = ratingService;
         }
 
-        // GET: api/Ratings
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        // Validate pagination values
+        private IActionResult? ValidatePagination(
+            int pageNumber,
+            int pageSize)
         {
-            return Ok(await ratingService.GetAllAsync());
+            if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
+            {
+                return BadRequest(
+                    "Page number must be at least 1 and page size must be between 1 and 100.");
+            }
+
+            return null;
+        }
+
+        // GET: api/Ratings?pageNumber=1&pageSize=10
+        [HttpGet]
+        public async Task<IActionResult> GetAll(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            var validation = ValidatePagination(pageNumber, pageSize);
+
+            if (validation != null)
+                return validation;
+
+            return Ok(await ratingService.GetAllAsync(
+                pageNumber, pageSize));
         }
 
         // GET: api/Ratings/5
@@ -36,18 +60,42 @@ namespace MovieTicketBookingWebAPI.Controllers
             return Ok(rating);
         }
 
-        // GET: api/Ratings/movie/1
+        // GET: api/Ratings/movie/1?pageNumber=1&pageSize=10
         [HttpGet("movie/{movieId}")]
-        public async Task<IActionResult> GetMovieRatings(int movieId)
+        public async Task<IActionResult> GetMovieRatings(
+            int movieId,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
         {
-            return Ok(await ratingService.GetMovieRatingsAsync(movieId));
+            if (movieId < 1)
+                return BadRequest("Movie ID must be at least 1.");
+
+            var validation = ValidatePagination(pageNumber, pageSize);
+
+            if (validation != null)
+                return validation;
+
+            return Ok(await ratingService.GetMovieRatingsAsync(
+                movieId, pageNumber, pageSize));
         }
 
-        // GET: api/Ratings/theatre/1
+        // GET: api/Ratings/theatre/1?pageNumber=1&pageSize=10
         [HttpGet("theatre/{theatreId}")]
-        public async Task<IActionResult> GetTheatreRatings(int theatreId)
+        public async Task<IActionResult> GetTheatreRatings(
+            int theatreId,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
         {
-            return Ok(await ratingService.GetTheatreRatingsAsync(theatreId));
+            if (theatreId < 1)
+                return BadRequest("Theatre ID must be at least 1.");
+
+            var validation = ValidatePagination(pageNumber, pageSize);
+
+            if (validation != null)
+                return validation;
+
+            return Ok(await ratingService.GetTheatreRatingsAsync(
+                theatreId, pageNumber, pageSize));
         }
 
         // POST: api/Ratings

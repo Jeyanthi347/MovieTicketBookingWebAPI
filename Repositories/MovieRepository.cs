@@ -15,9 +15,19 @@ public class MovieRepository : IMovieRepository
         this.context = context;
     }
 
-    public async Task<List<Movie>> GetAllAsync()
+    public async Task<(List<Movie> Movies, int TotalRecords)> GetAllAsync(
+        int pageNumber,
+        int pageSize)
     {
-        return await context.Movies.ToListAsync();
+        int totalRecords = await context.Movies.CountAsync();
+
+        var movies = await context.Movies
+            .OrderBy(m => m.MovieId)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (movies, totalRecords);
     }
 
     public async Task<Movie?> GetByIdAsync(int id)

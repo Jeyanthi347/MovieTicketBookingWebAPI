@@ -15,10 +15,20 @@ public class TheatreRepository : ITheatreRepository
         this.context = context;
     }
 
-    // Get all theatres
-    public async Task<List<Theatre>> GetAllAsync()
+    // Get paginated theatres
+    public async Task<(List<Theatre> Theatres, int TotalRecords)> GetAllAsync(
+        int pageNumber,
+        int pageSize)
     {
-        return await context.Theatres.ToListAsync();
+        int totalRecords = await context.Theatres.CountAsync();
+
+        var theatres = await context.Theatres
+            .OrderBy(t => t.TheatreId)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (theatres, totalRecords);
     }
 
     // Get theatre by ID

@@ -1,4 +1,5 @@
 ﻿
+using MovieTicketBookingWebAPI.DTOs.Common;
 using MovieTicketBookingWebAPI.DTOs.Screens;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
@@ -19,17 +20,29 @@ public class ScreenService : IScreenService
         this.theatreRepository = theatreRepository;
     }
 
-    // Get all screens
-    public async Task<List<ScreenResponseDto>> GetAllAsync()
+    // Get paginated screens
+    public async Task<PaginationResponseDto<ScreenResponseDto>> GetAllAsync(
+        int pageNumber,
+        int pageSize)
     {
-        var screens = await repository.GetAllAsync();
+        var result = await repository.GetAllAsync(pageNumber, pageSize);
 
-        return screens.Select(s => new ScreenResponseDto
+        var screens = result.Screens.Select(s => new ScreenResponseDto
         {
             ScreenId = s.ScreenId,
             TheatreId = s.TheatreId,
             ScreenName = s.ScreenName
         }).ToList();
+
+        return new PaginationResponseDto<ScreenResponseDto>
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = result.TotalRecords,
+            TotalPages = (int)Math.Ceiling(
+                result.TotalRecords / (double)pageSize),
+            Data = screens
+        };
     }
 
     // Get screen by ID

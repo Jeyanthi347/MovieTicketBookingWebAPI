@@ -1,4 +1,5 @@
 ﻿
+using MovieTicketBookingWebAPI.DTOs.Common;
 using MovieTicketBookingWebAPI.DTOs.Seats;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
@@ -39,12 +40,18 @@ public class SeatService : ISeatService
         return screens.Any(s => s.ScreenId == screenId);
     }
 
-    // Get all seats belonging to a screen
-    public async Task<List<SeatResponseDto>> GetByScreenIdAsync(int screenId)
+    // Get paginated seats belonging to a screen
+    public async Task<PaginationResponseDto<SeatResponseDto>> GetByScreenIdAsync(
+        int screenId,
+        int pageNumber,
+        int pageSize)
     {
-        var seats = await repository.GetByScreenIdAsync(screenId);
+        var result = await repository.GetByScreenIdAsync(
+            screenId,
+            pageNumber,
+            pageSize);
 
-        return seats.Select(s => new SeatResponseDto
+        var seats = result.Seats.Select(s => new SeatResponseDto
         {
             SeatId = s.SeatId,
             ScreenId = s.ScreenId,
@@ -52,6 +59,16 @@ public class SeatService : ISeatService
             SeatNumber = s.SeatNumber,
             SeatType = s.SeatType
         }).ToList();
+
+        return new PaginationResponseDto<SeatResponseDto>
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = result.TotalRecords,
+            TotalPages = (int)Math.Ceiling(
+                result.TotalRecords / (double)pageSize),
+            Data = seats
+        };
     }
 
     // Get seat by ID

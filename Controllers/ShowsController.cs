@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using MovieTicketBookingWebAPI.DTOs.Common;
 using MovieTicketBookingWebAPI.DTOs.Shows;
 using MovieTicketBookingWebAPI.Services.Interfaces;
 
@@ -64,12 +65,19 @@ public class ShowsController : ControllerBase
         }
     }
 
-    // GET: api/shows
-    // Get all shows
+    // GET: api/shows?pageNumber=1&pageSize=10
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
     {
-        var shows = await service.GetAllAsync();
+        if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
+        {
+            return BadRequest(
+                "Page number must be at least 1 and page size must be between 1 and 100.");
+        }
+
+        var shows = await service.GetAllAsync(pageNumber, pageSize);
 
         return Ok(shows);
     }

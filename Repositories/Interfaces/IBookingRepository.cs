@@ -1,4 +1,5 @@
-﻿using MovieTicketBookingWebAPI.Models;
+﻿
+using MovieTicketBookingWebAPI.Models;
 
 namespace MovieTicketBookingWebAPI.Repositories.Interfaces;
 
@@ -7,15 +8,20 @@ public interface IBookingRepository
     Task<Show?> GetShowByIdAsync(int showId);
 
     Task<List<ShowSeat>> GetShowSeatsByIdsAsync(
-        int showId, List<int> seatIds);
+        int showId,
+        List<int> seatIds);
 
-    Task<List<Booking>> GetAllAsync(
+    Task<(List<Booking> Bookings, int TotalRecords)> GetAllAsync(
+        int pageNumber,
+        int pageSize,
         int? userId = null);
 
     Task<Booking?> GetByIdAsync(int id);
 
-    Task<List<Booking>> GetByShowIdAsync(
+    Task<(List<Booking> Bookings, int TotalRecords)> GetByShowIdAsync(
         int showId,
+        int pageNumber,
+        int pageSize,
         int? userId = null);
 
     Task<List<string>> GetSeatLabelsAsync(int bookingId);

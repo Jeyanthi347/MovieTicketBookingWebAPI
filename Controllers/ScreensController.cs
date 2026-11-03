@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using MovieTicketBookingWebAPI.DTOs.Common;
 using MovieTicketBookingWebAPI.DTOs.Screens;
 using MovieTicketBookingWebAPI.Services.Interfaces;
 
@@ -46,17 +47,25 @@ public class ScreensController : ControllerBase
                 new { id = screen.ScreenId },
                 screen);
         }
-        catch (UnauthorizedAccessException ex)
+        catch (UnauthorizedAccessException)
         {
             return Forbid();
         }
     }
 
-    // GET: api/screens
+    // GET: api/screens?pageNumber=1&pageSize=10
     [HttpGet]
-    public async Task<IActionResult> GetAllScreens()
+    public async Task<IActionResult> GetAllScreens(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
     {
-        var screens = await service.GetAllAsync();
+        if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
+        {
+            return BadRequest(
+                "Page number must be at least 1 and page size must be between 1 and 100.");
+        }
+
+        var screens = await service.GetAllAsync(pageNumber, pageSize);
 
         return Ok(screens);
     }

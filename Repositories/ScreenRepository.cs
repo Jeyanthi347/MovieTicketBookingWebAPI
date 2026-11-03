@@ -15,10 +15,20 @@ public class ScreenRepository : IScreenRepository
         this.context = context;
     }
 
-    // Get all screens
-    public async Task<List<Screen>> GetAllAsync()
+    // Get paginated screens
+    public async Task<(List<Screen> Screens, int TotalRecords)> GetAllAsync(
+        int pageNumber,
+        int pageSize)
     {
-        return await context.Screens.ToListAsync();
+        int totalRecords = await context.Screens.CountAsync();
+
+        var screens = await context.Screens
+            .OrderBy(s => s.ScreenId)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (screens, totalRecords);
     }
 
     // Get screens belonging to a particular theatre

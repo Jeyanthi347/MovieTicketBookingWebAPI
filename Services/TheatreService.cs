@@ -1,4 +1,6 @@
-﻿using MovieTicketBookingWebAPI.DTOs.Theatres;
+﻿
+using MovieTicketBookingWebAPI.DTOs.Common;
+using MovieTicketBookingWebAPI.DTOs.Theatres;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
 using MovieTicketBookingWebAPI.Services.Interfaces;
@@ -14,17 +16,29 @@ public class TheatreService : ITheatreService
         this.repository = repository;
     }
 
-    // Get all theatres
-    public async Task<List<TheatreResponseDto>> GetAllAsync()
+    // Get paginated theatres
+    public async Task<PaginationResponseDto<TheatreResponseDto>> GetAllAsync(
+        int pageNumber,
+        int pageSize)
     {
-        var theatres = await repository.GetAllAsync();
+        var result = await repository.GetAllAsync(pageNumber, pageSize);
 
-        return theatres.Select(t => new TheatreResponseDto
+        var theatres = result.Theatres.Select(t => new TheatreResponseDto
         {
             TheatreId = t.TheatreId,
             Name = t.Name,
             Location = t.Location
         }).ToList();
+
+        return new PaginationResponseDto<TheatreResponseDto>
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = result.TotalRecords,
+            TotalPages = (int)Math.Ceiling(
+                result.TotalRecords / (double)pageSize),
+            Data = theatres
+        };
     }
 
     // Get theatre by ID
@@ -65,7 +79,9 @@ public class TheatreService : ITheatreService
     }
 
     // Update theatre
-    public async Task<TheatreResponseDto?> UpdateAsync(int id, UpdateTheatreDto dto)
+    public async Task<TheatreResponseDto?> UpdateAsync(
+        int id,
+        UpdateTheatreDto dto)
     {
         var theatre = await repository.GetByIdAsync(id);
 

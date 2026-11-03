@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MovieTicketBookingWebAPI.DTOs.Common;
 using MovieTicketBookingWebAPI.DTOs.Bookings;
 using MovieTicketBookingWebAPI.Services.Interfaces;
 
@@ -26,15 +27,26 @@ public class BookingsController : ControllerBase
             User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     }
 
-    // GET: api/bookings
+    // GET: api/bookings?pageNumber=1&pageSize=10
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
     {
+        if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
+        {
+            return BadRequest(
+                "Page number must be at least 1 and page size must be between 1 and 100.");
+        }
+
         int? userId = User.IsInRole("Admin")
             ? null
             : GetCurrentUserId();
 
-        var bookings = await service.GetAllAsync(userId);
+        var bookings = await service.GetAllAsync(
+            pageNumber,
+            pageSize,
+            userId);
 
         return Ok(bookings);
     }
@@ -55,16 +67,29 @@ public class BookingsController : ControllerBase
         return Ok(booking);
     }
 
-    // GET: api/bookings/show/5
+    // GET: api/bookings/show/5?pageNumber=1&pageSize=10
     [HttpGet("show/{showId}")]
-    public async Task<IActionResult> GetByShowId(int showId)
+    public async Task<IActionResult> GetByShowId(
+        int showId,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
     {
+        if (showId < 1 || pageNumber < 1 ||
+            pageSize < 1 || pageSize > 100)
+        {
+            return BadRequest(
+                "Show ID and page number must be at least 1. Page size must be between 1 and 100.");
+        }
+
         int? userId = User.IsInRole("Admin")
             ? null
             : GetCurrentUserId();
 
         var bookings = await service.GetByShowIdAsync(
-            showId, userId);
+            showId,
+            pageNumber,
+            pageSize,
+            userId);
 
         return Ok(bookings);
     }

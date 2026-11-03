@@ -5,7 +5,10 @@ namespace MovieTicketBookingWebAPI.Repositories.Interfaces;
 
 public interface ISeatRepository
 {
-    Task<List<Seat>> GetByScreenIdAsync(int screenId);
+    Task<(List<Seat> Seats, int TotalRecords)> GetByScreenIdAsync(
+        int screenId,
+        int pageNumber,
+        int pageSize);
 
     Task<Seat?> GetByIdAsync(int id);
 

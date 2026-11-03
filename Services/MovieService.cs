@@ -1,4 +1,6 @@
-﻿using MovieTicketBookingWebAPI.DTOs.Movies;
+﻿
+using MovieTicketBookingWebAPI.DTOs.Common;
+using MovieTicketBookingWebAPI.DTOs.Movies;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
 using MovieTicketBookingWebAPI.Services.Interfaces;
@@ -14,12 +16,14 @@ public class MovieService : IMovieService
         this.movieRepository = movieRepository;
     }
 
-    // Get all movies
-    public async Task<List<MovieResponseDto>> GetAllAsync()
+    // Get paginated movies
+    public async Task<PaginationResponseDto<MovieResponseDto>> GetAllAsync(
+        int pageNumber,
+        int pageSize)
     {
-        var movies = await movieRepository.GetAllAsync();
+        var result = await movieRepository.GetAllAsync(pageNumber, pageSize);
 
-        return movies.Select(movie => new MovieResponseDto
+        var movies = result.Movies.Select(movie => new MovieResponseDto
         {
             MovieId = movie.MovieId,
             MovieName = movie.MovieName,
@@ -31,6 +35,16 @@ public class MovieService : IMovieService
             Rating = movie.Rating,
             IsActive = movie.IsActive
         }).ToList();
+
+        return new PaginationResponseDto<MovieResponseDto>
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = result.TotalRecords,
+            TotalPages = (int)Math.Ceiling(
+                result.TotalRecords / (double)pageSize),
+            Data = movies
+        };
     }
 
     // Get movie by ID

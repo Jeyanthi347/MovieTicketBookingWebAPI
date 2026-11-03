@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using MovieTicketBookingWebAPI.Data;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
@@ -14,12 +15,23 @@ public class SeatRepository : ISeatRepository
         this.context = context;
     }
 
-    // Get all seats belonging to a screen
-    public async Task<List<Seat>> GetByScreenIdAsync(int screenId)
+    // Get paginated seats belonging to a screen
+    public async Task<(List<Seat> Seats, int TotalRecords)> GetByScreenIdAsync(
+        int screenId,
+        int pageNumber,
+        int pageSize)
     {
-        return await context.Seats
+        int totalRecords = await context.Seats
+            .CountAsync(s => s.ScreenId == screenId);
+
+        var seats = await context.Seats
             .Where(s => s.ScreenId == screenId)
+            .OrderBy(s => s.SeatId)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        return (seats, totalRecords);
     }
 
     // Get seat by ID

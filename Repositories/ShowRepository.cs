@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using MovieTicketBookingWebAPI.Data;
 using MovieTicketBookingWebAPI.DTOs.Shows;
 using MovieTicketBookingWebAPI.Models;
@@ -15,10 +16,20 @@ public class ShowRepository : IShowRepository
         this.context = context;
     }
 
-    // Get all shows
-    public async Task<List<Show>> GetAllAsync()
+    // Get paginated shows
+    public async Task<(List<Show> Shows, int TotalRecords)> GetAllAsync(
+        int pageNumber,
+        int pageSize)
     {
-        return await context.Shows.ToListAsync();
+        int totalRecords = await context.Shows.CountAsync();
+
+        var shows = await context.Shows
+            .OrderBy(s => s.ShowId)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (shows, totalRecords);
     }
 
     // Get show by ID
@@ -114,6 +125,7 @@ public class ShowRepository : IShowRepository
     public async Task<Show> UpdateAsync(Show show)
     {
         context.Shows.Update(show);
+
         await context.SaveChangesAsync();
 
         return show;
@@ -130,6 +142,7 @@ public class ShowRepository : IShowRepository
         }
 
         context.Shows.Remove(show);
+
         await context.SaveChangesAsync();
 
         return true;

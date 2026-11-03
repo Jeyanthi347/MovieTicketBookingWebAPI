@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using MovieTicketBookingWebAPI.DTOs.Common;
 using MovieTicketBookingWebAPI.DTOs.Seats;
 using MovieTicketBookingWebAPI.Services.Interfaces;
 
@@ -32,7 +33,6 @@ public class SeatsController : ControllerBase
     }
 
     // POST: api/seats
-    // Create one seat
     [HttpPost]
     [Authorize(Roles = "Admin,TheatreManager")]
     public async Task<IActionResult> Create(CreateSeatDto dto)
@@ -57,7 +57,6 @@ public class SeatsController : ControllerBase
     }
 
     // POST: api/seats/bulk
-    // Create multiple seats
     [HttpPost("bulk")]
     [Authorize(Roles = "Admin,TheatreManager")]
     public async Task<IActionResult> BulkCreate(BulkCreateSeatsDto dto)
@@ -78,18 +77,29 @@ public class SeatsController : ControllerBase
         }
     }
 
-    // GET: api/seats/screen/1
-    // Get all seats belonging to a screen
+    // GET: api/seats/screen/1?pageNumber=1&pageSize=10
     [HttpGet("screen/{screenId}")]
-    public async Task<IActionResult> GetByScreenId(int screenId)
+    public async Task<IActionResult> GetByScreenId(
+        int screenId,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
     {
-        var seats = await service.GetByScreenIdAsync(screenId);
+        if (screenId < 1 || pageNumber < 1 ||
+            pageSize < 1 || pageSize > 100)
+        {
+            return BadRequest(
+                "Screen ID and page number must be at least 1. Page size must be between 1 and 100.");
+        }
+
+        var seats = await service.GetByScreenIdAsync(
+            screenId,
+            pageNumber,
+            pageSize);
 
         return Ok(seats);
     }
 
     // GET: api/seats/1
-    // Get seat by ID
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -102,7 +112,6 @@ public class SeatsController : ControllerBase
     }
 
     // PUT: api/seats/1
-    // Update seat
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin,TheatreManager")]
     public async Task<IActionResult> Update(int id, UpdateSeatDto dto)
@@ -127,7 +136,6 @@ public class SeatsController : ControllerBase
     }
 
     // DELETE: api/seats/1
-    // Delete seat
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin,TheatreManager")]
     public async Task<IActionResult> Delete(int id)

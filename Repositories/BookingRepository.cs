@@ -24,7 +24,8 @@ public class BookingRepository : IBookingRepository
 
     // Get selected seats belonging to a particular show
     public async Task<List<ShowSeat>> GetShowSeatsByIdsAsync(
-        int showId, List<int> seatIds)
+        int showId,
+        List<int> seatIds)
     {
         return await context.ShowSeats
             .Where(ss => ss.ShowId == showId &&
@@ -32,12 +33,24 @@ public class BookingRepository : IBookingRepository
             .ToListAsync();
     }
 
-    // Get all bookings or bookings belonging to a particular user
-    public async Task<List<Booking>> GetAllAsync(int? userId = null)
+    // Get paginated bookings, optionally filtered by user
+    public async Task<(List<Booking> Bookings, int TotalRecords)> GetAllAsync(
+        int pageNumber,
+        int pageSize,
+        int? userId = null)
     {
-        return await context.Bookings
-            .Where(b => userId == null || b.UserId == userId)
+        var query = context.Bookings
+            .Where(b => userId == null || b.UserId == userId);
+
+        int totalRecords = await query.CountAsync();
+
+        var bookings = await query
+            .OrderByDescending(b => b.BookingId)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        return (bookings, totalRecords);
     }
 
     // Get booking by ID
@@ -47,14 +60,26 @@ public class BookingRepository : IBookingRepository
             .FirstOrDefaultAsync(b => b.BookingId == id);
     }
 
-    // Get bookings for a particular show and optionally a particular user
-    public async Task<List<Booking>> GetByShowIdAsync(
-        int showId, int? userId = null)
+    // Get paginated bookings for a particular show and optionally user
+    public async Task<(List<Booking> Bookings, int TotalRecords)> GetByShowIdAsync(
+        int showId,
+        int pageNumber,
+        int pageSize,
+        int? userId = null)
     {
-        return await context.Bookings
+        var query = context.Bookings
             .Where(b => b.ShowId == showId &&
-                        (userId == null || b.UserId == userId))
+                        (userId == null || b.UserId == userId));
+
+        int totalRecords = await query.CountAsync();
+
+        var bookings = await query
+            .OrderByDescending(b => b.BookingId)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        return (bookings, totalRecords);
     }
 
     // Get seat labels for a booking
@@ -136,7 +161,8 @@ public class BookingRepository : IBookingRepository
 
     // Cancel booking and release seats
     public async Task CancelAsync(
-        Booking booking, List<ShowSeat> showSeats)
+        Booking booking,
+        List<ShowSeat> showSeats)
     {
         await using var transaction =
             await context.Database.BeginTransactionAsync();

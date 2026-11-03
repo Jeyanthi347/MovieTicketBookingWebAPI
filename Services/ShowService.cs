@@ -1,4 +1,5 @@
 ﻿
+using MovieTicketBookingWebAPI.DTOs.Common;
 using MovieTicketBookingWebAPI.DTOs.Shows;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
@@ -39,12 +40,14 @@ public class ShowService : IShowService
         return screens.Any(s => s.ScreenId == screenId);
     }
 
-    // Get all shows
-    public async Task<List<ShowResponseDto>> GetAllAsync()
+    // Get paginated shows
+    public async Task<PaginationResponseDto<ShowResponseDto>> GetAllAsync(
+        int pageNumber,
+        int pageSize)
     {
-        var shows = await repository.GetAllAsync();
+        var result = await repository.GetAllAsync(pageNumber, pageSize);
 
-        return shows.Select(s => new ShowResponseDto
+        var shows = result.Shows.Select(s => new ShowResponseDto
         {
             ShowId = s.ShowId,
             MovieId = s.MovieId,
@@ -53,6 +56,16 @@ public class ShowService : IShowService
             EndTime = s.EndTime,
             TicketPrice = s.TicketPrice
         }).ToList();
+
+        return new PaginationResponseDto<ShowResponseDto>
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = result.TotalRecords,
+            TotalPages = (int)Math.Ceiling(
+                result.TotalRecords / (double)pageSize),
+            Data = shows
+        };
     }
 
     // Get show by ID

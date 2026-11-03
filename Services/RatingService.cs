@@ -1,4 +1,5 @@
 ﻿
+using MovieTicketBookingWebAPI.DTOs.Common;
 using MovieTicketBookingWebAPI.DTOs.Ratings;
 using MovieTicketBookingWebAPI.Models;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
@@ -15,13 +16,22 @@ namespace MovieTicketBookingWebAPI.Services
             this.repository = repository;
         }
 
-        public async Task<List<RatingResponseDto>> GetAllAsync()
+        // Get all ratings with pagination
+        public async Task<PaginationResponseDto<RatingResponseDto>> GetAllAsync(
+            int pageNumber,
+            int pageSize)
         {
-            var ratings = await repository.GetAllAsync();
+            var result = await repository.GetAllAsync(
+                pageNumber, pageSize);
 
-            return ratings.Select(MapToDto).ToList();
+            return CreatePaginationResponse(
+                result.Ratings,
+                result.TotalRecords,
+                pageNumber,
+                pageSize);
         }
 
+        // Get rating by ID
         public async Task<RatingResponseDto?> GetByIdAsync(int id)
         {
             var rating = await repository.GetByIdAsync(id);
@@ -29,41 +39,73 @@ namespace MovieTicketBookingWebAPI.Services
             return rating == null ? null : MapToDto(rating);
         }
 
-        public async Task<List<RatingResponseDto>> GetMovieRatingsAsync(
-            int movieId)
+        // Get movie ratings with pagination
+        public async Task<PaginationResponseDto<RatingResponseDto>> GetMovieRatingsAsync(
+            int movieId,
+            int pageNumber,
+            int pageSize)
         {
-            var ratings = await repository.GetMovieRatingsAsync(movieId);
+            var result = await repository.GetMovieRatingsAsync(
+                movieId, pageNumber, pageSize);
 
-            return ratings.Select(MapToDto).ToList();
+            return CreatePaginationResponse(
+                result.Ratings,
+                result.TotalRecords,
+                pageNumber,
+                pageSize);
         }
 
-        public async Task<List<RatingResponseDto>> GetTheatreRatingsAsync(
-            int theatreId)
+        // Get theatre ratings with pagination
+        public async Task<PaginationResponseDto<RatingResponseDto>> GetTheatreRatingsAsync(
+            int theatreId,
+            int pageNumber,
+            int pageSize)
         {
-            var ratings = await repository.GetTheatreRatingsAsync(theatreId);
+            var result = await repository.GetTheatreRatingsAsync(
+                theatreId, pageNumber, pageSize);
 
-            return ratings.Select(MapToDto).ToList();
+            return CreatePaginationResponse(
+                result.Ratings,
+                result.TotalRecords,
+                pageNumber,
+                pageSize);
         }
 
+        // Create pagination response
+        private static PaginationResponseDto<RatingResponseDto>
+            CreatePaginationResponse(
+                List<Rating> ratings,
+                int totalRecords,
+                int pageNumber,
+                int pageSize)
+        {
+            return new PaginationResponseDto<RatingResponseDto>
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalRecords = totalRecords,
+                TotalPages = (int)Math.Ceiling(
+                    totalRecords / (double)pageSize),
+                Data = ratings.Select(MapToDto).ToList()
+            };
+        }
+
+        // Create rating
         public async Task<RatingResponseDto?> CreateAsync(
             CreateRatingDto dto, int? userId, bool isAdmin)
         {
-            // Exactly one target must be selected.
             if (dto.MovieId.HasValue == dto.TheatreId.HasValue)
                 throw new ArgumentException(
                     "Provide either MovieId or TheatreId, not both.");
 
-            // Rating must be between 1 and 10.
             if (dto.RatingValue < 1 || dto.RatingValue > 10)
                 throw new ArgumentException(
                     "Rating must be between 1 and 10.");
 
-            // Booking must be confirmed.
             if (!await repository.IsBookingConfirmedAsync(dto.BookingId))
                 throw new ArgumentException(
                     "Only confirmed bookings can be rated.");
 
-            // Customers can rate only their own bookings.
             if (!isAdmin)
             {
                 if (!userId.HasValue ||
@@ -75,7 +117,6 @@ namespace MovieTicketBookingWebAPI.Services
                 }
             }
 
-            // Verify that the booking belongs to the selected movie/theatre.
             if (!await repository.IsValidBookingTargetAsync(
                 dto.BookingId, dto.MovieId, dto.TheatreId))
             {
@@ -83,7 +124,6 @@ namespace MovieTicketBookingWebAPI.Services
                     "The selected movie or theatre does not belong to this booking.");
             }
 
-            // Prevent duplicate ratings for the same booking and target.
             if (await repository.RatingExistsAsync(
                 dto.BookingId, dto.MovieId, dto.TheatreId))
             {
@@ -108,6 +148,7 @@ namespace MovieTicketBookingWebAPI.Services
             return result == null ? null : MapToDto(result);
         }
 
+        // Update rating
         public async Task<RatingResponseDto?> UpdateAsync(
             int id, UpdateRatingDto dto, int? userId)
         {
@@ -120,8 +161,6 @@ namespace MovieTicketBookingWebAPI.Services
             if (rating == null)
                 return null;
 
-            // Admin passes null and can update any rating.
-            // Customers can update only their own ratings.
             if (userId.HasValue &&
                 rating.Booking.UserId != userId.Value)
             {
@@ -139,6 +178,7 @@ namespace MovieTicketBookingWebAPI.Services
                 : MapToDto(updatedRating);
         }
 
+        // Delete rating
         public async Task<bool> DeleteAsync(int id, int? userId)
         {
             var rating = await repository.GetByIdAsync(id);
@@ -146,8 +186,6 @@ namespace MovieTicketBookingWebAPI.Services
             if (rating == null)
                 return false;
 
-            // Admin passes null and can delete any rating.
-            // Customers can delete only their own ratings.
             if (userId.HasValue &&
                 rating.Booking.UserId != userId.Value)
             {
@@ -158,6 +196,7 @@ namespace MovieTicketBookingWebAPI.Services
             return await repository.DeleteAsync(id);
         }
 
+        // Map entity to response DTO
         private static RatingResponseDto MapToDto(Rating rating)
         {
             return new RatingResponseDto

@@ -1,12 +1,15 @@
 ﻿
+using MovieTicketBookingWebAPI.DTOs.Common;
 using MovieTicketBookingWebAPI.DTOs.Shows;
 
 namespace MovieTicketBookingWebAPI.Services.Interfaces;
 
 public interface IShowService
 {
-    // Get all shows
-    Task<List<ShowResponseDto>> GetAllAsync();
+    // Get paginated shows
+    Task<PaginationResponseDto<ShowResponseDto>> GetAllAsync(
+        int pageNumber,
+        int pageSize);
 
     // Get show by ID
     Task<ShowResponseDto?> GetByIdAsync(int id);

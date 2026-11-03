@@ -1,18 +1,24 @@
-﻿using MovieTicketBookingWebAPI.DTOs.Bookings;
+﻿
+using MovieTicketBookingWebAPI.DTOs.Common;
+using MovieTicketBookingWebAPI.DTOs.Bookings;
 
 namespace MovieTicketBookingWebAPI.Services.Interfaces;
 
 public interface IBookingService
 {
-    Task<List<BookingResponseDto>> GetAllAsync(
+    Task<PaginationResponseDto<BookingResponseDto>> GetAllAsync(
+        int pageNumber,
+        int pageSize,
         int? userId = null);
 
     Task<BookingDetailsResponseDto?> GetByIdAsync(
         int id,
         int? userId = null);
 
-    Task<List<BookingResponseDto>> GetByShowIdAsync(
+    Task<PaginationResponseDto<BookingResponseDto>> GetByShowIdAsync(
         int showId,
+        int pageNumber,
+        int pageSize,
         int? userId = null);
 
     Task<BookingResponseDto> CreateAsync(

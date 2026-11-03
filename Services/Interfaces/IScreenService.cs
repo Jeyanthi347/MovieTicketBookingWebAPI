@@ -1,11 +1,14 @@
 ﻿
+using MovieTicketBookingWebAPI.DTOs.Common;
 using MovieTicketBookingWebAPI.DTOs.Screens;
 
 namespace MovieTicketBookingWebAPI.Services.Interfaces;
 
 public interface IScreenService
 {
-    Task<List<ScreenResponseDto>> GetAllAsync();
+    Task<PaginationResponseDto<ScreenResponseDto>> GetAllAsync(
+        int pageNumber,
+        int pageSize);
 
     Task<ScreenResponseDto?> GetByIdAsync(int id);
 

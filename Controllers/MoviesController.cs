@@ -1,8 +1,11 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using MovieTicketBookingWebAPI.DTOs.Common;
 using MovieTicketBookingWebAPI.DTOs.Movies;
 using MovieTicketBookingWebAPI.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+
+
 
 namespace MovieTicketBookingWebAPI.Controllers;
 
@@ -17,11 +20,19 @@ public class MoviesController : ControllerBase
         this.movieService = movieService;
     }
 
-    // GET: api/Movies
+    // GET: api/Movies?pageNumber=1&pageSize=10
     [HttpGet]
-    public async Task<ActionResult<List<MovieResponseDto>>> GetAll()
+    public async Task<ActionResult<PaginationResponseDto<MovieResponseDto>>> GetAll(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
     {
-        var movies = await movieService.GetAllAsync();
+        if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
+        {
+            return BadRequest(
+                "Page number must be at least 1 and page size must be between 1 and 100.");
+        }
+
+        var movies = await movieService.GetAllAsync(pageNumber, pageSize);
 
         return Ok(movies);
     }
