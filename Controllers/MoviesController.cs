@@ -13,6 +13,7 @@ namespace MovieTicketBookingWebAPI.Controllers;
 [ApiController]
 public class MoviesController : ControllerBase
 {
+    
     private readonly IMovieService movieService;
 
     public MoviesController(IMovieService movieService)

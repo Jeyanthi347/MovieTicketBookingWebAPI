@@ -20,4 +20,6 @@ public class Movie
     public decimal Rating { get; set; }
 
     public bool IsActive { get; set; } = true;
+
+    //n
 }

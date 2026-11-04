@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using MovieTicketBookingWebAPI.DTOs.Common;
 using MovieTicketBookingWebAPI.DTOs.Bookings;
 using MovieTicketBookingWebAPI.Services.Interfaces;
+using MovieTicketBookingWebAPI.Authorization.Policies;
 
 namespace MovieTicketBookingWebAPI.Controllers;
 
@@ -124,6 +125,7 @@ public class BookingsController : ControllerBase
     }
 
     // PUT: api/bookings/1/cancel
+    [Authorize(Policy = AuthorizationPolicies.BookingOwner)]
     [HttpPut("{id}/cancel")]
     public async Task<IActionResult> Cancel(int id)
     {

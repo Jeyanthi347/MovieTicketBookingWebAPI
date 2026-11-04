@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 using System.Text;
 
 using MovieTicketBookingWebAPI.Data;
@@ -11,8 +12,22 @@ using MovieTicketBookingWebAPI.Repositories;
 using MovieTicketBookingWebAPI.Repositories.Interfaces;
 using MovieTicketBookingWebAPI.Services;
 using MovieTicketBookingWebAPI.Services.Interfaces;
+using MovieTicketBookingWebAPI.Authorization.Handlers;
+using MovieTicketBookingWebAPI.Authorization.Requirements;
+using MovieTicketBookingWebAPI.Authorization.Policies;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure CORS for Angular frontend
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularPolicy", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 // Add controllers
 builder.Services.AddControllers();
@@ -52,6 +67,9 @@ builder.Services.AddScoped<IShowService, ShowService>();
 // Booking registration
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IBookingService, BookingService>();
+
+// Custom Authorization Handler registration
+builder.Services.AddScoped<IAuthorizationHandler, BookingOwnerAuthorizationHandler>();
 
 // Rating registration
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
@@ -104,23 +122,78 @@ builder.Services.AddAuthentication(options =>
 });
 
 // Add authorization
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(AuthorizationPolicies.BookingOwner, policy =>
+    {
+        policy.RequireAuthenticatedUser();
+
+        policy.AddRequirements(
+            new BookingOwnerRequirement());
+    });
+});
 
 var app = builder.Build();
 
-// Configure HTTP request pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+// 1. HTTPS Redirection
 app.UseHttpsRedirection();
 
-// Authentication must come before Authorization
+// 2. Routing
+//app.UseRouting();
+
+// 3. Endpoint Metadata Diagnostics
+if (app.Environment.IsDevelopment())
+{
+    app.UseMiddleware<EndpointMetadataMiddleware>();
+}
+
+// 4. Authentication
+// Validates JWT and populates HttpContext.User
 app.UseAuthentication();
+
+// 5. Authentication and Authorization Diagnostics
+if (app.Environment.IsDevelopment())
+{
+    app.UseMiddleware<AuthenticationDiagnosticsMiddleware>();
+
+    app.UseMiddleware<AuthorizationDiagnosticsMiddleware>();
+}
+
+// 6. Authorization
+// Checks endpoint access permissions
 app.UseAuthorization();
+
+
+// ==========================================
+// 12. MAP CONTROLLERS
+// ==========================================
 
 app.MapControllers();
 
+
+// ==========================================
+// 13. RUN APPLICATION
+// ==========================================
+
 app.Run();
+
+
+// Configure HTTP request pipeline
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+//app.UseHttpsRedirection();
+
+//// Enable CORS
+//app.UseCors("AngularPolicy");
+
+//// Authentication must come before Authorization
+//app.UseAuthentication();
+//app.UseAuthorization();
+
+//app.MapControllers();
+
+//app.Run();
